@@ -1967,6 +1967,10 @@ abstract class ObjectModelCore implements \PrestaShop\PrestaShop\Core\Foundation
         if (is_object($class)) {
             $class = get_class($class);
         }
+        
+        if (!property_exists($class, 'definition')) {
+            return false;
+        }
 
         if ($field === null) {
             $cache_id = 'objectmodel_def_' . $class;
