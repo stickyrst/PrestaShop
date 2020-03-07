@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,24 +16,24 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Core\Addon\Module;
 
+use LegacyTests\TestCase\FakeLogger;
+use LegacyTests\TestCase\UnitTestCase;
 use PrestaShop\PrestaShop\Adapter\Module\AdminModuleDataProvider;
 use PrestaShop\PrestaShop\Adapter\Module\ModuleDataUpdater;
 use PrestaShop\PrestaShop\Core\Addon\AddonListFilter;
 use PrestaShop\PrestaShop\Core\Addon\AddonListFilterOrigin;
 use PrestaShop\PrestaShop\Core\Addon\AddonListFilterStatus;
 use PrestaShop\PrestaShop\Core\Addon\AddonListFilterType;
-use LegacyTests\TestCase\FakeLogger;
-use LegacyTests\TestCase\UnitTestCase;
 
 /**
  * @runInSeparateProcess
@@ -50,7 +50,7 @@ class ModuleRepositoryTest extends UnitTestCase
 
     private $http_host_not_found = false;
 
-    public function setUp()
+    protected function setUp()
     {
         if (!defined('__PS_BASE_URI__')) {
             define('__PS_BASE_URI__', 'http://www.example.com/shop');
@@ -87,18 +87,15 @@ class ModuleRepositoryTest extends UnitTestCase
 
         $this->apiClientS = $this->getMockBuilder('PrestaShopBundle\Service\DataProvider\Marketplace\ApiClient')
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $this->addonsDataProviderS = $this->getMockBuilder('PrestaShop\PrestaShop\Adapter\Addons\AddonsDataProvider')
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $this->categoriesProviderS = $this->getMockBuilder('PrestaShopBundle\Service\DataProvider\Admin\CategoriesProvider')
             ->disableOriginalConstructor()
-            ->getmock()
-        ;
+            ->getmock();
 
         $this->translatorStub = $this->getMockBuilder('Symfony\Component\Translation\Translator')
             ->disableOriginalConstructor()
@@ -110,8 +107,7 @@ class ModuleRepositoryTest extends UnitTestCase
         $this->adminModuleDataProviderStub = $this->getMockBuilder('PrestaShop\PrestaShop\Adapter\Module\AdminModuleDataProvider')
             ->setConstructorArgs(array($this->translatorStub, $this->logger, $this->addonsDataProviderS, $this->categoriesProviderS, $this->moduleDataProviderStub))
             ->setMethods(array('getCatalogModulesNames'))
-            ->getMock()
-        ;
+            ->getMock();
 
         $this->adminModuleDataProviderStub
             ->method('getCatalogModulesNames')
@@ -133,11 +129,10 @@ class ModuleRepositoryTest extends UnitTestCase
                 ),
                 new FakeLogger(),
                 $this->translatorStub,
-                __DIR__.'/../../../../resources/modules/'
+                __DIR__.'/../../../../resources/modules/',
             ))
             ->setMethods(array('readCacheFile', 'generateCacheFile'))
-            ->getMock()
-        ;
+            ->getMock();
 
         /*
          * Mock function 'readCacheFile()' to disable the cache
@@ -158,12 +153,12 @@ class ModuleRepositoryTest extends UnitTestCase
          */
     }
 
-    public function test_get_at_least_one_module_from_universe()
+    public function testGetAtLeastOneModuleFromUniverse()
     {
         $this->assertGreaterThan(0, count($this->moduleRepositoryStub->getList()));
     }
 
-    public function test_get_only_installed_modules()
+    public function testGetOnlyInstalledModules()
     {
         $all_modules = $this->moduleRepositoryStub->getList();
 
@@ -181,12 +176,12 @@ class ModuleRepositoryTest extends UnitTestCase
         foreach ($all_modules as $name => $module) {
             // Each installed module must be found in the installed modules list
             if ($module->database->get('installed') == 1) {
-                $this->assertTrue(array_key_exists($name, $installed_modules), sprintf('Module %s not found in the filtered list !', $name));
+                $this->assertArrayHasKey($name, $installed_modules, sprintf('Module %s not found in the filtered list !', $name));
             }
         }
     }
 
-    public function test_get_only_NOT_installed_modules()
+    public function testGetOnlyNOTInstalledModules()
     {
         $all_modules = $this->moduleRepositoryStub->getList();
 
@@ -204,12 +199,12 @@ class ModuleRepositoryTest extends UnitTestCase
         foreach ($all_modules as $name => $module) {
             // Each installed module must be found in the installed modules list
             if ($module->attributes->get('productType') == 'module' && $module->database->get('installed') == 0) {
-                $this->assertTrue(array_key_exists($name, $not_installed_modules), sprintf('Module %s not found in the filtered list !', $name));
+                $this->assertArrayHasKey($name, $not_installed_modules, sprintf('Module %s not found in the filtered list !', $name));
             }
         }
     }
 
-    public function test_get_only_enabled_modules()
+    public function testGetOnlyEnabledModules()
     {
         $all_modules = $this->moduleRepositoryStub->getList();
 
@@ -229,12 +224,12 @@ class ModuleRepositoryTest extends UnitTestCase
             // Each installed module must be found in the installed modules list
             if ($module->database->get('installed') == 1
                 && $module->database->get('active') == 1) {
-                $this->assertTrue(array_key_exists($name, $installed_and_active_modules), sprintf('Module %s not found in the filtered list !', $name));
+                $this->assertArrayHasKey($name, $installed_and_active_modules, sprintf('Module %s not found in the filtered list !', $name));
             }
         }
     }
 
-    public function test_get_not_enabled_modules()
+    public function testGetNotEnabledModules()
     {
         $all_modules = $this->moduleRepositoryStub->getList();
 
@@ -251,12 +246,12 @@ class ModuleRepositoryTest extends UnitTestCase
         foreach ($all_modules as $name => $module) {
             // Each installed module must be found in the installed modules list
             if ($module->attributes->get('productType') == 'module' && $module->database->get('installed') == 1  && $module->database->get('active') == 0) {
-                $this->assertTrue(array_key_exists($name, $not_active_modules), sprintf('Module %s not found in the filtered list !', $name));
+                $this->assertArrayHasKey($name, $not_active_modules, sprintf('Module %s not found in the filtered list !', $name));
             }
         }
     }
 
-    public function test_get_installed_but_disabled_modules()
+    public function testGetInstalledButDisabledModules()
     {
         $all_modules = $this->moduleRepositoryStub->getList();
 
@@ -274,12 +269,12 @@ class ModuleRepositoryTest extends UnitTestCase
         foreach ($all_modules as $name => $module) {
             // Each installed module must be found in the installed modules list
             if ($module->database->get('installed') == 1 && $module->database->get('active') == 0) {
-                $this->assertTrue(array_key_exists($name, $installed_but_not_installed_modules), sprintf('Module %s not found in the filtered list !', $name));
+                $this->assertArrayHasKey($name, $installed_but_not_installed_modules, sprintf('Module %s not found in the filtered list !', $name));
             }
         }
     }
 
-    public function test_get_addons_from_marketplace_only()
+    public function testGetAddonsFromMarketplaceOnly()
     {
         $filters = new AddonListFilter();
         $filters->setOrigin(AddonListFilterOrigin::ADDONS_ALL);
@@ -290,7 +285,7 @@ class ModuleRepositoryTest extends UnitTestCase
         }
     }
 
-    public function test_get_addons_not_on_marketplace_1()
+    public function testGetAddonsNotOnMarketplace1()
     {
         $filters = new AddonListFilter();
         $filters->setOrigin(AddonListFilterOrigin::DISK);
@@ -301,7 +296,7 @@ class ModuleRepositoryTest extends UnitTestCase
         }
     }
 
-    public function test_get_addons_not_on_marketplace_2()
+    public function testGetAddonsNotOnMarketplace2()
     {
         $filters = new AddonListFilter();
         $filters->setOrigin(~AddonListFilterOrigin::ADDONS_ALL);
@@ -315,7 +310,7 @@ class ModuleRepositoryTest extends UnitTestCase
     /**
      * @todo how to get fake modules returned ?
      */
-    public function test_get_only_modules()
+    public function testGetOnlyModules()
     {
         $filters = new AddonListFilter();
         $filters->setType(AddonListFilterType::MODULE);
@@ -325,7 +320,7 @@ class ModuleRepositoryTest extends UnitTestCase
         }
     }
 
-    public function test_get_only_services()
+    public function testGetOnlyServices()
     {
         $filters = new AddonListFilter();
         $filters->setType(AddonListFilterType::SERVICE);
@@ -335,15 +330,15 @@ class ModuleRepositoryTest extends UnitTestCase
         }
     }
 
-    public function test_should_not_be_able_to_return_theme()
+    public function testShouldNotBeAbleToReturnTheme()
     {
         $filters = new AddonListFilter();
         $filters->setType(AddonListFilterType::THEME);
 
-        $this->assertEquals(0, count($this->moduleRepositoryStub->getFilteredList($filters)));
+        $this->assertCount(0, $this->moduleRepositoryStub->getFilteredList($filters));
     }
 
-    public function teardown()
+    protected function teardown()
     {
         parent::teardown();
 

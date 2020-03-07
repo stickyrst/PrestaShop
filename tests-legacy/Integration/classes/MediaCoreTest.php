@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,18 +16,18 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Classes;
 
-use LegacyTests\TestCase\IntegrationTestCase;
 use Configuration;
+use LegacyTests\TestCase\IntegrationTestCase;
 use Media;
 
 class MediaCoreTest extends IntegrationTestCase
@@ -38,7 +38,7 @@ class MediaCoreTest extends IntegrationTestCase
     {
         $domain = Configuration::get('PS_SHOP_DOMAIN');
         $result = Media::getJqueryPath('1.11');
-        $this->assertEquals(true, in_array('http://'.$domain.__PS_BASE_URI__.'js/jquery/jquery.noConflict.php?version=1.11', $result));
+        $this->assertTrue(in_array('http://'.$domain.__PS_BASE_URI__.'js/jquery/jquery.noConflict.php?version=1.11', $result));
     }
 
     protected function setUp()

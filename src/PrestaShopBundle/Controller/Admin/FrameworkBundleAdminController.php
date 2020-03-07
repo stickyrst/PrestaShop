@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,27 +16,33 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace PrestaShopBundle\Controller\Admin;
 
+use Exception;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\Shop\Context;
 use PrestaShop\PrestaShop\Core\ConfigurationInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridInterface;
+use PrestaShop\PrestaShop\Core\Localization\Locale;
+use PrestaShop\PrestaShop\Core\Localization\Locale\Repository as LocaleRepository;
+use PrestaShop\PrestaShop\Core\Module\Exception\ModuleErrorInterface;
+use PrestaShopBundle\Security\Voter\PageVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use PrestaShop\PrestaShop\Adapter\Configuration;
-use PrestaShopBundle\Security\Voter\PageVoter;
 
 /**
  * Extends The Symfony framework bundle controller to add common functions for PrestaShop needs.
@@ -72,20 +78,6 @@ class FrameworkBundleAdminController extends Controller
             'is_shop_context' => (new Context())->isShopContext(),
             'layoutTitle' => empty($this->layoutTitle) ? '' : $this->trans($this->layoutTitle, 'Admin.Navigation.Menu'),
         ];
-    }
-
-    public function hashUpdateJsAction($hash)
-    {
-        $contents = file_get_contents('http://localhost:8080/' . $hash . '.hot-update.js');
-
-        return new Response($contents);
-    }
-
-    public function hashUpdateJsonAction($hash)
-    {
-        $contents = file_get_contents('http://localhost:8080/' . $hash . '.hot-update.json');
-
-        return new Response($contents);
     }
 
     /**
@@ -162,7 +154,7 @@ class FrameworkBundleAdminController extends Controller
      *
      * @return array The responses of hooks
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function renderHook($hookName, array $parameters)
     {
@@ -197,10 +189,33 @@ class FrameworkBundleAdminController extends Controller
 
     /**
      * Get the old but still useful context.
+     *
+     * @return \Context
      */
     protected function getContext()
     {
         return $this->get('prestashop.adapter.legacy.context')->getContext();
+    }
+
+    /**
+     * Get the locale based on the context
+     *
+     * @return Locale
+     */
+    protected function getContextLocale(): Locale
+    {
+        $locale = $this->getContext()->getCurrentLocale();
+        if (null !== $locale) {
+            return $locale;
+        }
+
+        /** @var LocaleRepository $localeRepository */
+        $localeRepository = $this->get('prestashop.core.localization.locale.repository');
+        $locale = $localeRepository->getLocale(
+            $this->getContext()->language->getLocale()
+        );
+
+        return $locale;
     }
 
     /**
@@ -333,7 +348,7 @@ class FrameworkBundleAdminController extends Controller
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getForbiddenActionMessage($action, $suffix = '')
     {
@@ -349,7 +364,7 @@ class FrameworkBundleAdminController extends Controller
             return $this->trans('You do not have permission to add this.', 'Admin.Notifications.Error');
         }
 
-        throw new \Exception(sprintf('Invalid action (%s)', $action . $suffix));
+        throw new Exception(sprintf('Invalid action (%s)', $action . $suffix));
     }
 
     /**
@@ -357,11 +372,25 @@ class FrameworkBundleAdminController extends Controller
      *
      * @param string $type
      * @param string $code
+     * @param string $message
      *
      * @return string
      */
-    protected function getFallbackErrorMessage($type, $code)
+    protected function getFallbackErrorMessage($type, $code, $message = '')
     {
+        $isDebug = $this->get('kernel')->isDebug();
+        if ($isDebug && !empty($message)) {
+            return $this->trans(
+                'An unexpected error occurred. [%type% code %code%]: %message%',
+                'Admin.Notifications.Error',
+                [
+                    '%type%' => $type,
+                    '%code%' => $code,
+                    '%message%' => $message,
+                ]
+            );
+        }
+
         return $this->trans(
             'An unexpected error occurred. [%type% code %code%]',
             'Admin.Notifications.Error',
@@ -447,5 +476,52 @@ class FrameworkBundleAdminController extends Controller
     protected function getContextShopId()
     {
         return $this->getContext()->shop->id;
+    }
+
+    /**
+     * @param FormInterface $form
+     */
+    protected function addFlashFormErrors(FormInterface $form)
+    {
+        /** @var FormError $formError */
+        foreach ($form->getErrors(true) as $formError) {
+            $this->addFlash('error', $formError->getMessage());
+        }
+    }
+
+    /**
+     * Get error by exception from given messages
+     *
+     * @param Exception $e
+     * @param array $messages
+     *
+     * @return string
+     */
+    protected function getErrorMessageForException(Exception $e, array $messages)
+    {
+        if ($e instanceof ModuleErrorInterface) {
+            return $e->getMessage();
+        }
+
+        $exceptionType = get_class($e);
+        $exceptionCode = $e->getCode();
+
+        if (isset($messages[$exceptionType])) {
+            $message = $messages[$exceptionType];
+
+            if (is_string($message)) {
+                return $message;
+            }
+
+            if (is_array($message) && isset($message[$exceptionCode])) {
+                return $message[$exceptionCode];
+            }
+        }
+
+        return $this->getFallbackErrorMessage(
+            $exceptionType,
+            $exceptionCode,
+            $e->getMessage()
+        );
     }
 }

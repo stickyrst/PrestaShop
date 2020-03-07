@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -34,7 +34,7 @@ class DbPDOCore extends Db
     /** @var PDO */
     protected $link;
 
-    /* @var PDOStatement */
+    /** @var PDOStatement */
     protected $result;
 
     /**
@@ -79,9 +79,18 @@ class DbPDOCore extends Db
         } else {
             $dsn .= 'host=' . $host;
         }
-        $dsn .= ';charset=utf8';
+        $dsn .= ';charset=utf8mb4';
 
-        return new PDO($dsn, $user, $password, array(PDO::ATTR_TIMEOUT => $timeout, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true));
+        return new PDO(
+            $dsn,
+            $user,
+            $password,
+            [
+                PDO::ATTR_TIMEOUT => $timeout,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
+            ]
+        );
     }
 
     /**
@@ -291,8 +300,8 @@ class DbPDOCore extends Db
      */
     public function _escape($str)
     {
-        $search = array('\\', "\0", "\n", "\r", "\x1a", "'", '"');
-        $replace = array('\\\\', '\\0', '\\n', '\\r', "\Z", "\'", '\"');
+        $search = ['\\', "\0", "\n", "\r", "\x1a", "'", '"'];
+        $replace = ['\\\\', '\\0', '\\n', '\\r', "\Z", "\'", '\"'];
 
         return str_replace($search, $replace, $str);
     }
@@ -430,9 +439,10 @@ class DbPDOCore extends Db
         $result = $this->link->query($sql);
         while ($row = $result->fetch()) {
             if ($row['Engine'] == 'InnoDB') {
-                if (in_array($row['Support'], array('DEFAULT', 'YES'))) {
+                if (in_array($row['Support'], ['DEFAULT', 'YES'])) {
                     $value = 'InnoDB';
                 }
+
                 break;
             }
         }
@@ -458,32 +468,9 @@ class DbPDOCore extends Db
         } catch (PDOException $e) {
             return false;
         }
-        $result = $link->exec('SET NAMES \'utf8\'');
+        $result = $link->exec('SET NAMES utf8mb4');
         unset($link);
 
         return ($result === false) ? false : true;
-    }
-
-    /**
-     * Checks if auto increment value and offset is 1.
-     *
-     * @param string $server
-     * @param string $user
-     * @param string $pwd
-     *
-     * @return bool
-     */
-    public static function checkAutoIncrement($server, $user, $pwd)
-    {
-        try {
-            $link = DbPDO::getPDO($server, $user, $pwd, false, 5);
-        } catch (PDOException $e) {
-            return false;
-        }
-        $ret = (bool) (($result = $link->query('SELECT @@auto_increment_increment as aii')) && ($row = $result->fetch()) && $row['aii'] == 1);
-        $ret &= (bool) (($result = $link->query('SELECT @@auto_increment_offset as aio')) && ($row = $result->fetch()) && $row['aio'] == 1);
-        unset($link);
-
-        return $ret;
     }
 }

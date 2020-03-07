@@ -1,5 +1,5 @@
 <!--**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -15,17 +15,27 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="ps-sortable-column" data-sort-col-name="id_product" :data-sort-is-current="isCurrent" :data-sort-direction="sortDirection" @click="sortToggle">
+  <div
+    class="ps-sortable-column"
+    data-sort-col-name="id_product"
+    :data-sort-is-current="isCurrent"
+    :data-sort-direction="sortDirection"
+    @click="sortToggle"
+  >
     <span role="columnheader"><slot /></span>
-    <span role="button" class="ps-sort" aria-label="Tri"></span>
+    <span
+      role="button"
+      class="ps-sort"
+      aria-label="Tri"
+    />
   </div>
 </template>
 
@@ -33,9 +43,15 @@
   export default {
     props: {
       // column name
-      order: String,
+      order: {
+        type: String,
+        required: true,
+      },
       // indicates the currently sorted column in the table
-      currentSort: String,
+      currentSort: {
+        type: String,
+        required: true,
+      },
     },
     methods: {
       sortToggle() {
@@ -54,4 +70,3 @@
     },
   };
 </script>
-

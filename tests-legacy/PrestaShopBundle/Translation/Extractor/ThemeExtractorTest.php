@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,21 +16,21 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\PrestaShopBundle\Translation\Extractor;
 
-use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
 use PrestaShop\TranslationToolsBundle\Translation\Dumper\PhpDumper;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @group sf
@@ -52,7 +52,7 @@ class ThemeExtractorTest extends KernelTestCase
         self::$xliffFolder = self::$rootDir.'/translations';
     }
 
-    public function setUp()
+    protected function setUp()
     {
         self::bootKernel();
 
@@ -64,7 +64,7 @@ class ThemeExtractorTest extends KernelTestCase
         $this->themeExtractor->setThemeProvider($themeProvider);
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         if (file_exists(self::$legacyFolder)) {
             $this->filesystem->remove(self::$legacyFolder);
@@ -82,8 +82,7 @@ class ThemeExtractorTest extends KernelTestCase
         $this->themeExtractor
             ->addDumper(new PhpDumper())
             ->setFormat('php')
-            ->extract($this->getFakeTheme())
-        ;
+            ->extract($this->getFakeTheme());
 
         $legacyTranslationFile = self::$legacyFolder.'/en-US.php';
         $this->assertTrue($this->filesystem->exists($legacyTranslationFile));
@@ -93,8 +92,7 @@ class ThemeExtractorTest extends KernelTestCase
     {
         $this->themeExtractor
             ->setOutputPath(self::$xliffFolder)
-            ->extract($this->getFakeTheme())
-        ;
+            ->extract($this->getFakeTheme());
 
         $isFilesExists = $this->filesystem->exists(array(
             self::$xliffFolder.'/en-US/Shop/Theme/Actions.xlf',

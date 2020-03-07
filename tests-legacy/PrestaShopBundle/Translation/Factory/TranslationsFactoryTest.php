@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,19 +16,19 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\PrestaShopBundle\Translation\Factory;
 
+use PHPUnit\Framework\TestCase;
 use PrestaShopBundle\Translation\Factory\TranslationsFactory;
 use Symfony\Component\Translation\MessageCatalogue;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @group sf
@@ -38,42 +38,35 @@ class TranslationsFactoryTest extends TestCase
     private $factory;
     private $providerMock;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->providerMock = $this->getMockBuilder('PrestaShopBundle\Translation\Provider\AbstractProvider')
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $this->providerMock->method('getIdentifier')
-            ->willReturn('mock')
-        ;
+            ->willReturn('mock');
 
         $this->providerMock->method('setLocale')
-            ->will($this->returnSelf())
-        ;
+            ->will($this->returnSelf());
 
         $this->providerMock->method('getMessageCatalogue')
-            ->willReturn(new MessageCatalogue('en-US'))
-        ;
+            ->willReturn(new MessageCatalogue('en-US'));
 
         $this->providerMock->method('getDefaultCatalogue')
-            ->willReturn(new MessageCatalogue('en-US'))
-        ;
+            ->willReturn(new MessageCatalogue('en-US'));
 
         $this->providerMock->method('getDatabaseCatalogue')
-            ->willReturn(new MessageCatalogue('en-US'))
-        ;
+            ->willReturn(new MessageCatalogue('en-US'));
 
         $this->factory = new TranslationsFactory();
     }
 
     public function testCreateCatalogueWithoutProviderFails()
     {
-        $this->setExpectedException('PrestaShopBundle\Translation\Factory\ProviderNotFoundException');
+        $this->expectException('PrestaShopBundle\Translation\Factory\ProviderNotFoundException');
         $expected = $this->factory
-            ->createCatalogue($this->providerMock->getIdentifier())
-        ;
+            ->createCatalogue($this->providerMock->getIdentifier());
     }
 
     public function testCreateCatalogueWithProvider()
@@ -81,30 +74,27 @@ class TranslationsFactoryTest extends TestCase
         $this->factory->addProvider($this->providerMock);
 
         $expected = $this->factory
-            ->createCatalogue($this->providerMock->getIdentifier())
-        ;
+            ->createCatalogue($this->providerMock->getIdentifier());
 
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $expected);
     }
 
     public function testCreateTranslationsArrayWithoutProviderFails()
     {
-        $this->setExpectedException('PrestaShopBundle\Translation\Factory\ProviderNotFoundException');
+        $this->expectException('PrestaShopBundle\Translation\Factory\ProviderNotFoundException');
         $expected = $this->factory
-            ->createTranslationsArray($this->providerMock->getIdentifier())
-        ;
+            ->createTranslationsArray($this->providerMock->getIdentifier());
     }
 
     public function testCreateTranslationsArrayWithProvider()
     {
         $this->providerMock->method('getXliffCatalogue')
-            ->willReturn(new MessageCatalogue('en-US'))
-        ;
+            ->willReturn(new MessageCatalogue('en-US'));
 
         $this->factory->addProvider($this->providerMock);
 
         $expected = $this->factory
-            ->createTranslationsArray($this->providerMock->getIdentifier())
-        ;
+            ->createTranslationsArray($this->providerMock->getIdentifier());
+        $this->assertInternalType('array', $expected);
     }
 }

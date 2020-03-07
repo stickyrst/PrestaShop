@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,20 +16,19 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-
 namespace LegacyTests\Integration;
 
-use LegacyTests\TestCase\IntegrationTestCase;
 use Context;
 use Dispatcher;
+use LegacyTests\TestCase\IntegrationTestCase;
 use ReflectionClass;
 
 class ProductURLsTest extends IntegrationTestCase
@@ -62,7 +61,9 @@ class ProductURLsTest extends IntegrationTestCase
     {
         $url = $this->link->getProductLink(
             $id_product,
-            null, null, null,
+            null,
+            null,
+            null,
             $this->language->id,
             null,
             $id_product_attribute,
@@ -76,7 +77,7 @@ class ProductURLsTest extends IntegrationTestCase
         return $parts;
     }
 
-    public function test_url_takes_variant_into_account__with_url_rewriting()
+    public function testUrlTakesVariantIntoAccountWithUrlRewriting()
     {
         $this->enableURLRewriting();
         $filename = basename($this->getURL(1, 2)['path']);
@@ -87,7 +88,7 @@ class ProductURLsTest extends IntegrationTestCase
         );
     }
 
-    public function test_url_ignores_variant_if_not_specified__with_url_rewriting()
+    public function testUrlIgnoresVariantIfNotSpecifiedWithUrlRewriting()
     {
         $this->enableURLRewriting();
         $filename = basename($this->getURL(1, null)['path']);
@@ -98,7 +99,7 @@ class ProductURLsTest extends IntegrationTestCase
         );
     }
 
-    public function test_url_takes_variant_into_account__without_url_rewriting()
+    public function testUrlTakesVariantIntoAccountWithoutUrlRewriting()
     {
         $this->disableURLRewriting();
         $query = [];
@@ -108,13 +109,13 @@ class ProductURLsTest extends IntegrationTestCase
         $this->assertEquals(6, $query['id_product_attribute']);
     }
 
-    public function test_url_ignores_variant_if_not_specified__without_url_rewriting()
+    public function testUrlIgnoresVariantIfNotSpecifiedWithoutUrlRewriting()
     {
         $this->disableURLRewriting();
         $query = [];
         parse_str($this->getURL(1, null)['query'], $query);
 
         $this->assertEquals(1, $query['id_product']);
-        $this->assertTrue(empty($query['id_product_attribute']));
+        $this->assertArrayNotHasKey('id_product_attribute', $query);
     }
 }

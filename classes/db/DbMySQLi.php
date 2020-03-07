@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -34,7 +34,7 @@ class DbMySQLiCore extends Db
     /** @var mysqli */
     protected $link;
 
-    /* @var mysqli_result */
+    /** @var mysqli_result */
     protected $result;
 
     /**
@@ -74,7 +74,7 @@ class DbMySQLiCore extends Db
         }
 
         // UTF-8 support
-        if (!$this->link->query('SET NAMES \'utf8\'')) {
+        if (!$this->link->query('SET NAMES utf8mb4')) {
             throw new PrestaShopDatabaseException(Tools::displayError('PrestaShop Fatal error: no utf-8 support. Please check your server configuration.'));
         }
 
@@ -178,7 +178,7 @@ class DbMySQLiCore extends Db
         if (method_exists($result, 'fetch_all')) {
             return $result->fetch_all(MYSQLI_ASSOC);
         } else {
-            $ret = array();
+            $ret = [];
 
             while ($row = $this->nextRow($result)) {
                 $ret[] = $row;
@@ -378,9 +378,10 @@ class DbMySQLiCore extends Db
         $result = $this->link->query($sql);
         while ($row = $result->fetch_assoc()) {
             if ($row['Engine'] == 'InnoDB') {
-                if (in_array($row['Support'], array('DEFAULT', 'YES'))) {
+                if (in_array($row['Support'], ['DEFAULT', 'YES'])) {
                     $value = 'InnoDB';
                 }
+
                 break;
             }
         }
@@ -439,26 +440,7 @@ class DbMySQLiCore extends Db
     public static function tryUTF8($server, $user, $pwd)
     {
         $link = @new mysqli($server, $user, $pwd);
-        $ret = $link->query("SET NAMES 'UTF8'");
-        $link->close();
-
-        return $ret;
-    }
-
-    /**
-     * Checks if auto increment value and offset is 1.
-     *
-     * @param string $server
-     * @param string $user
-     * @param string $pwd
-     *
-     * @return bool
-     */
-    public static function checkAutoIncrement($server, $user, $pwd)
-    {
-        $link = @new mysqli($server, $user, $pwd);
-        $ret = (bool) (($result = $link->query('SELECT @@auto_increment_increment as aii')) && ($row = $result->fetch_assoc()) && $row['aii'] == 1);
-        $ret &= (bool) (($result = $link->query('SELECT @@auto_increment_offset as aio')) && ($row = $result->fetch_assoc()) && $row['aio'] == 1);
+        $ret = $link->query('SET NAMES utf8mb4');
         $link->close();
 
         return $ret;

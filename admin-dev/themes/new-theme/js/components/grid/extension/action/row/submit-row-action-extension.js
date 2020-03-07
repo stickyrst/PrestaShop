@@ -1,5 +1,5 @@
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -15,15 +15,15 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-const $ = window.$;
+const {$} = window;
 
 /**
  * Class SubmitRowActionExtension handles submitting of row action
@@ -41,7 +41,7 @@ export default class SubmitRowActionExtension {
       const $button = $(event.currentTarget);
       const confirmMessage = $button.data('confirm-message');
 
-      if (confirmMessage.length && !confirm(confirmMessage)) {
+      if (confirmMessage.length && !window.confirm(confirmMessage)) {
         return;
       }
 
@@ -49,15 +49,15 @@ export default class SubmitRowActionExtension {
       const isGetOrPostMethod = ['GET', 'POST'].includes(method);
 
       const $form = $('<form>', {
-        'action': $button.data('url'),
-        'method': isGetOrPostMethod ? method : 'POST',
+        action: $button.data('url'),
+        method: isGetOrPostMethod ? method : 'POST',
       }).appendTo('body');
 
       if (!isGetOrPostMethod) {
         $form.append($('<input>', {
-          'type': '_hidden',
-          'name': '_method',
-          'value': method
+          type: '_hidden',
+          name: '_method',
+          value: method,
         }));
       }
 

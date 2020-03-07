@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -54,7 +54,7 @@ class ToolsCoreTest extends TestCase
     public function testGetValueDefaultValueIsFalse()
     {
         $this->setPostAndGet();
-        $this->assertEquals(false, Tools::getValue('hello'));
+        $this->assertFalse(Tools::getValue('hello'));
     }
 
     public function testGetValueUsesDefaultValue()
@@ -74,25 +74,26 @@ class ToolsCoreTest extends TestCase
         $this->setPostAndGet(array(
             '' => true,
             ' ' => true,
-            null => true
+            null => true,
         ));
 
-        $this->assertEquals(false, Tools::getValue('', true));
-        $this->assertEquals(true, Tools::getValue(' '));
-        $this->assertEquals(false, Tools::getValue(null, true));
+        $this->assertFalse(Tools::getValue('', true));
+        $this->assertTrue(Tools::getValue(' '));
+        $this->assertFalse(Tools::getValue(null, true));
     }
 
-    public function testGetValueStripsNullCharsFromReturnedStringsExamples()
+    public function getValueStripsNullCharsFromReturnedStringsExamples()
     {
         return array(
             array("\0", ''),
             array("haxx\0r", 'haxxr'),
             array("haxx\0\0\0r", 'haxxr'),
+            array('1234\5678', '1234\5678'),
         );
     }
 
     /**
-     * @dataProvider testGetValueStripsNullCharsFromReturnedStringsExamples
+     * @dataProvider getValueStripsNullCharsFromReturnedStringsExamples
      */
     public function testGetValueStripsNullCharsFromReturnedStrings($rawString, $cleanedString)
     {
@@ -115,7 +116,7 @@ class ToolsCoreTest extends TestCase
         $this->assertEquals($cleanedString, Tools::getValue('NON EXISTING KEY', $rawString));
     }
 
-    public function testSpreadAmountExamples()
+    public function spreadAmountExamples()
     {
         return array(
             array(
@@ -123,77 +124,77 @@ class ToolsCoreTest extends TestCase
                 array(array('a' => 2), array('a' => 1)), // expected result
                 1, 0,                                     // amount and precision
                 array(array('a' => 1), array('a' => 1)), // source rows
-                'a'                                         // sort column
+                'a',                                         // sort column
             ),
             array(
                 // check with 1 decimal
                 array(array('a' => 1.5), array('a' => 1.5)),
                 1, 1,
                 array(array('a' => 1), array('a' => 1)),
-                'a'
+                'a',
             ),
             array(
                 // 2 decimals, but only one really needed
                 array(array('a' => 1.5), array('a' => 1.5)),
                 1, 2,
                 array(array('a' => 1), array('a' => 1)),
-                'a'
+                'a',
             ),
             array(
                 // check that the biggest "a" gets the adjustment
                 array(array('a' => 3), array('a' => 1)),
                 1, 0,
                 array(array('a' => 1), array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 // check it works with amount > count($rows)
                 array(array('a' => 4), array('a' => 2)),
                 3, 0,
                 array(array('a' => 1), array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 // 2 decimals
                 array(array('a' => 2.01), array('a' => 1)),
                 0.01, 2,
                 array(array('a' => 1), array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 // 2 decimals, equal level of adjustment
                 array(array('a' => 2.01), array('a' => 1.01)),
                 0.02, 2,
                 array(array('a' => 1), array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 // 2 decimals, different levels of adjustmnt
                 array(array('a' => 2.02), array('a' => 1.01)),
                 0.03, 2,
                 array(array('a' => 1), array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 // check associative arrays are OK too
                 array(array('a' => 2.01), array('a' => 1.01)),
                 0.02, 2,
                 array('z' => array('a' => 1), 'x' => array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 // check amount is rounded if it needs more precision than asked for
                 array(array('a' => 2.02), array('a' => 1.01)),
                 0.025, 2,
                 array(array('a' => 1), array('a' => 2)),
-                'a'
+                'a',
             ),
             array(
                 array(array('a' => 7.69), array('a' => 4.09), array('a' => 1.8)),
                 -0.32, 2,
                 array(array('a' => 7.8), array('a' => 4.2), array('a' => 1.9)),
-                'a'
-            )
+                'a',
+            ),
         );
     }
 
@@ -224,7 +225,7 @@ class ToolsCoreTest extends TestCase
     }
 
     /**
-     * @dataProvider testSpreadAmountExamples
+     * @dataProvider spreadAmountExamples
      */
     public function testSpreadAmount($expectedRows, $amount, $precision, $rows, $column)
     {
@@ -235,7 +236,7 @@ class ToolsCoreTest extends TestCase
     /**
      * @return array of example taken from the installation of PrestaShop
      */
-    public function testCamelCaseExample()
+    public function getCamelCaseExample()
     {
         return array(
             array('address_format', 'addressFormat', false),
@@ -319,7 +320,7 @@ class ToolsCoreTest extends TestCase
     }
 
     /**
-     * @dataProvider testCamelCaseExample
+     * @dataProvider getCamelCaseExample
      */
     public function testToCamelCase($source, $expected, $firstCharUpperCase)
     {
@@ -333,7 +334,7 @@ class ToolsCoreTest extends TestCase
     }
 
     /**
-     * @dataProvider testStrReplaceFirstProvider
+     * @dataProvider getStrReplaceFirstProvider
      */
     public function testStrReplaceFirst($search, $replace, $subject, $cur, $expected) {
         $this->assertEquals($expected, Tools::StrReplaceFirst($search, $replace, $subject, $cur));
@@ -381,7 +382,7 @@ class ToolsCoreTest extends TestCase
         ];
     }
 
-    public function testStrReplaceFirstProvider() {
+    public function getStrReplaceFirstProvider() {
         return [
             ['s', 'f', 'seed', 0, 'feed'],
             ['s', 'f', 'seed', 1, 'seed'],

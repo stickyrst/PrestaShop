@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,19 +16,19 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace PrestaShopBundle\Controller\Admin;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use PrestaShopBundle\Form\Admin\Product\ProductCombination;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class CombinationController extends FrameworkBundleAdminController
 {
@@ -55,9 +55,9 @@ class CombinationController extends FrameworkBundleAdminController
 
         return $response->setContent($this->renderView(
             '@Product/ProductPage/Forms/form_combination_collection.html.twig',
-            array(
+            [
                 'combinationForms' => $forms,
-            )
+            ]
         ));
     }
 
@@ -82,7 +82,7 @@ class CombinationController extends FrameworkBundleAdminController
 
         $combinations = $modelMapper->getAttributesResume($product);
 
-        $combinationList = array();
+        $combinationList = [];
 
         if (is_array($combinations)) {
             foreach ($combinations as $combination) {

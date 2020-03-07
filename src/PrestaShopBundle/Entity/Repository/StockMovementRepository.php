@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -76,27 +76,27 @@ class StockMovementRepository extends StockManagementRepository
         $having = '',
         $orderByClause = null
     ) {
-        if (is_null($orderByClause)) {
+        if (null === $orderByClause) {
             $orderByClause = $this->orderByMovementsIds();
         }
 
         $combinationNameQuery = $this->getCombinationNameSubquery();
 
         return str_replace(
-            array(
+            [
                 '{and_where}',
                 '{having}',
                 '{order_by}',
                 '{table_prefix}',
                 '{combination_name}',
-            ),
-            array(
+            ],
+            [
                 $andWhereClause,
                 $having,
                 $orderByClause,
                 $this->tablePrefix,
                 $combinationNameQuery,
-            ),
+            ],
             'SELECT SQL_CALC_FOUND_ROWS
               sm.id_stock_mvt,
               sm.id_stock,
@@ -201,8 +201,8 @@ class StockMovementRepository extends StockManagementRepository
                 $row['order_link'] = $this->contextAdapter->getContext()->link->getAdminLink(
                     'AdminOrders',
                     true,
-                    array(),
-                    array('vieworder' => true, 'id_order' => (int) $row['id_order'])
+                    [],
+                    ['vieworder' => true, 'id_order' => (int) $row['id_order']]
                 );
             } else {
                 $row['order_link'] = 'N/A';

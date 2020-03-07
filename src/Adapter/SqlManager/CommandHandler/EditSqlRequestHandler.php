@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -56,12 +56,7 @@ final class EditSqlRequestHandler implements EditSqlRequestHandlerInterface
             $entity = new RequestSql($command->getSqlRequestId()->getValue());
 
             if (0 >= $entity->id) {
-                throw new SqlRequestNotFoundException(
-                    sprintf(
-                        'SqlRequest with id "%s" was not found for edit',
-                        $command->getSqlRequestId()->getValue()
-                    )
-                );
+                throw new SqlRequestNotFoundException(sprintf('SqlRequest with id "%s" was not found for edit', $command->getSqlRequestId()->getValue()));
             }
 
             if (null !== $command->getName()) {
@@ -73,20 +68,10 @@ final class EditSqlRequestHandler implements EditSqlRequestHandlerInterface
             }
 
             if (false === $entity->update()) {
-                throw new CannotEditSqlRequestException(
-                    sprintf(
-                        'Error occurred when updating SqlRequest with id "%s"',
-                        $command->getSqlRequestId()->getValue()
-                    )
-                );
+                throw new CannotEditSqlRequestException(sprintf('Error occurred when updating SqlRequest with id "%s"', $command->getSqlRequestId()->getValue()));
             }
         } catch (PrestaShopException $e) {
-            throw new SqlRequestException(
-                sprintf(
-                    'Error occurred when updating SqlRequest with id "%s"',
-                    $command->getSqlRequestId()->getValue()
-                )
-            );
+            throw new SqlRequestException(sprintf('Error occurred when updating SqlRequest with id "%s"', $command->getSqlRequestId()->getValue()));
         }
     }
 }

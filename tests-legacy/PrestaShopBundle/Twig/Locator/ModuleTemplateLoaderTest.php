@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,18 +16,18 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\PrestaShopBundle\Twig\Locator;
 
-use PrestaShopBundle\Twig\Locator\ModuleTemplateLoader;
 use PHPUnit\Framework\TestCase;
+use PrestaShopBundle\Twig\Locator\ModuleTemplateLoader;
 
 /**
  * @group sf
@@ -68,16 +68,17 @@ class ModuleTemplateLoaderTest extends TestCase
 
     public function testGetPaths()
     {
-        self::assertCount(
+        $this->assertCount(
             2,
             $this->loader->getPaths('Product'),
             'Two templates for the namespace "Product" should be found.'
         );
 
-        self::assertCount(
+        $this->assertCount(
             3,
             $this->loader->getPaths('PrestaShop'),
-            'One templates should be found.');
+            'One templates should be found.'
+        );
     }
 
     /**
@@ -88,7 +89,7 @@ class ModuleTemplateLoaderTest extends TestCase
      */
     public function testGetSourceContext($sourceContent, $twigPathAsked, $successMessage)
     {
-        self::assertEquals(
+        $this->assertEquals(
             $sourceContent . PHP_EOL,
             $this->loader->getSourceContext($twigPathAsked)->getCode(),
             $successMessage
@@ -112,7 +113,7 @@ class ModuleTemplateLoaderTest extends TestCase
     {
         $loader = new ModuleTemplateLoader([]);
 
-        self::assertEquals(array(), $loader->getPaths());
+        $this->assertEquals(array(), $loader->getPaths());
     }
 
     /**
@@ -122,10 +123,10 @@ class ModuleTemplateLoaderTest extends TestCase
     {
         $loader = new ModuleTemplateLoader([]);
 
-        self::assertEquals([], $loader->getNamespaces());
+        $this->assertEquals([], $loader->getNamespaces());
 
         $loader->addPath(sys_get_temp_dir(), 'named');
 
-        self::assertEquals(['named'], $loader->getNamespaces());
+        $this->assertEquals(['named'], $loader->getNamespaces());
     }
 }

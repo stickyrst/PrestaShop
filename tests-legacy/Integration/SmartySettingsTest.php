@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,14 +16,13 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-
 
 namespace LegacyTests\Integration;
 
@@ -33,7 +32,7 @@ class SmartySettingsTest extends IntegrationTestCase
 {
     private $smarty;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         global $smarty;
@@ -44,10 +43,11 @@ class SmartySettingsTest extends IntegrationTestCase
     private function render($templateString, array $parameters)
     {
         $this->smarty->assign($parameters);
+
         return $this->smarty->fetch('string:' . $templateString);
     }
 
-    public function test_a_link_is_escaped_automatically()
+    public function testALinkIsEscapedAutomatically()
     {
         $str = '<a>hello</a>';
         $this->assertEquals(
@@ -58,7 +58,7 @@ class SmartySettingsTest extends IntegrationTestCase
         );
     }
 
-    public function test_nofilter_prevents_escape()
+    public function testNofilterPreventsEscape()
     {
         $str = '<a>hello</a>';
         $this->assertEquals(
@@ -69,7 +69,7 @@ class SmartySettingsTest extends IntegrationTestCase
         );
     }
 
-    public function test_html_is_not_escaped_twice()
+    public function testHtmlIsNotEscapedTwice()
     {
         $str = '<a>hello</a>';
         $this->assertEquals(

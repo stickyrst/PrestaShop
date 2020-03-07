@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,14 +16,13 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-
 
 class Cart extends CartCore
 {
@@ -45,13 +44,17 @@ class Cart extends CartCore
 
     public function deleteProduct($id_product, $id_product_attribute = null, $id_customization = null, $id_address_delivery = 0)
     {
-        $result = Hook::exec('ppbsDeleteCartProduct', array(
+        $result = Hook::exec(
+            'ppbsDeleteCartProduct',
+            array(
                 'id_product' => $id_product,
                 'id_product_attribute' => $id_product_attribute,
                 'id_customization' => $id_customization,
                 'id_address_delivery' => $id_address_delivery,
             ),
-            null, false);
+            null,
+            false
+        );
         if ($result == false) {
             parent::deleteProduct($id_product, $id_product_attribute = null, $id_customization = null, $id_address_delivery = 0);
         }

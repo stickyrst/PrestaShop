@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,23 +16,24 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Presenter\Product;
 
+use Hook;
+use Language;
+use Link;
 use PrestaShop\PrestaShop\Adapter\Image\ImageRetriever;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
 use PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever;
 use PrestaShop\PrestaShop\Core\Product\ProductPresentationSettings;
 use Symfony\Component\Translation\TranslatorInterface;
-use Language;
-use Link;
 
 class ProductPresenter
 {
@@ -80,7 +81,7 @@ class ProductPresenter
         array $product,
         Language $language
     ) {
-        return new ProductLazyArray(
+        $productLazyArray = new ProductLazyArray(
             $settings,
             $product,
             $language,
@@ -90,5 +91,11 @@ class ProductPresenter
             $this->productColorsRetriever,
             $this->translator
         );
+
+        Hook::exec('actionPresentProduct',
+            ['presentedProduct' => &$productLazyArray]
+        );
+
+        return $productLazyArray;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,24 +31,23 @@ use PrestaShop\PrestaShop\Core\Product\Search\Pagination;
 
 class PaginationTest extends Testcase
 {
-    public function setUp()
+    protected function setUp()
     {
-        $this->pagination = new Pagination;
+        $this->pagination = new Pagination();
     }
 
-    public function test_pagination_adds_context_first_and_last_page_and_previous_next()
+    public function testPaginationAddsContextFirstAndLastPageAndPreviousNext()
     {
         $this->pagination
             ->setPagesCount(10)
-            ->setPage(5)
-        ;
+            ->setPage(5);
 
         $this->assertEquals([
             ['type' => 'previous', 'clickable' => true, 'page' => 4,      'current' => false],
             ['type' => 'page', 'clickable' => true, 'page' => 1,      'current' => false],
             ['type' => 'spacer', 'clickable' => false, 'page' => null,   'current' => false],
             ['type' => 'page', 'clickable' => true, 'page' => 4,      'current' => false],
-            ['type' => 'page', 'clickable' => false, 'page' => 5,      'current' => true ],
+            ['type' => 'page', 'clickable' => false, 'page' => 5,      'current' => true],
             ['type' => 'page', 'clickable' => true, 'page' => 6,      'current' => false],
             ['type' => 'spacer', 'clickable' => false, 'page' => null,   'current' => false],
             ['type' => 'page', 'clickable' => true, 'page' => 10,     'current' => false],
@@ -56,12 +55,11 @@ class PaginationTest extends Testcase
         ], $this->pagination->buildLinks());
     }
 
-    public function test_pagination_context_when_on_first_page()
+    public function testPaginationContextWhenOnFirstPage()
     {
         $this->pagination
             ->setPagesCount(10)
-            ->setPage(1)
-        ;
+            ->setPage(1);
 
         $this->assertEquals([
             ['type' => 'previous', 'clickable' => false, 'page' => 1,      'current' => false],
@@ -74,12 +72,11 @@ class PaginationTest extends Testcase
         ], $this->pagination->buildLinks());
     }
 
-    public function test_pagination_context_when_on_last_page()
+    public function testPaginationContextWhenOnLastPage()
     {
         $this->pagination
             ->setPagesCount(10)
-            ->setPage(10)
-        ;
+            ->setPage(10);
 
         $this->assertEquals([
             ['type' => 'previous', 'clickable' => true, 'page' => 9,     'current' => false],
@@ -92,12 +89,11 @@ class PaginationTest extends Testcase
         ], $this->pagination->buildLinks());
     }
 
-    public function test_pagination_context_makes_sense_when_only_one_page()
+    public function testPaginationContextMakesSenseWhenOnlyOnePage()
     {
         $this->pagination
             ->setPagesCount(1)
-            ->setPage(1)
-        ;
+            ->setPage(1);
 
         $this->assertEquals([
             ['type' => 'previous', 'clickable' => false, 'page' => 1,     'current' => false],

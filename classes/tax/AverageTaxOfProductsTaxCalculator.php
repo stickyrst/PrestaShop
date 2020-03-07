@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,7 +31,7 @@ class AverageTaxOfProductsTaxCalculator
 
     public $computation_method = 'average_tax_of_products';
 
-    public function __construct(\PrestaShop\PrestaShop\Core\Foundation\Database\DatabaseInterface $db, \PrestaShop\PrestaShop\Core\ConfigurationInterface $configuration)
+    public function __construct(PrestaShop\PrestaShop\Core\Foundation\Database\DatabaseInterface $db, PrestaShop\PrestaShop\Core\ConfigurationInterface $configuration)
     {
         $this->db = $db;
         $this->configuration = $configuration;
@@ -59,15 +59,15 @@ class AverageTaxOfProductsTaxCalculator
 
     public function getTaxesAmount($price_before_tax, $price_after_tax = null, $round_precision = 2, $round_mode = null)
     {
-        $amounts = array();
+        $amounts = [];
         $total_base = 0;
 
         foreach ($this->getProductTaxes() as $row) {
             if (!array_key_exists($row['id_tax'], $amounts)) {
-                $amounts[$row['id_tax']] = array(
+                $amounts[$row['id_tax']] = [
                     'rate' => $row['rate'],
                     'base' => 0,
-                );
+                ];
             }
 
             $amounts[$row['id_tax']]['base'] += $row['total_price_tax_excl'];

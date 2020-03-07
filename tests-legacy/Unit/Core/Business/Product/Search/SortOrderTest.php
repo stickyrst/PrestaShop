@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,7 +31,7 @@ use PrestaShop\PrestaShop\Core\Product\Search\SortOrder;
 
 class SortOrderTest extends TestCase
 {
-    public function test_toLegacyOrderBy_product_name()
+    public function testToLegacyOrderByProductName()
     {
         $this->assertEquals(
             'name',
@@ -44,7 +44,7 @@ class SortOrderTest extends TestCase
         );
     }
 
-    public function test_toLegacyOrderBy_product_price()
+    public function testToLegacyOrderByProductPrice()
     {
         $this->assertEquals(
             'price',
@@ -57,7 +57,7 @@ class SortOrderTest extends TestCase
         );
     }
 
-    public function test_toLegacyOrderBy_product_position()
+    public function testToLegacyOrderByProductPosition()
     {
         $this->assertEquals(
             'position',
@@ -70,7 +70,7 @@ class SortOrderTest extends TestCase
         );
     }
 
-    public function test_toLegacyOrderBy_manufacturer_name()
+    public function testToLegacyOrderByManufacturerName()
     {
         $this->assertEquals(
             'manufacturer_name',
@@ -83,7 +83,7 @@ class SortOrderTest extends TestCase
         );
     }
 
-    public function test_toLegacyOrderWay_asc()
+    public function testToLegacyOrderWayAsc()
     {
         $this->assertEquals(
             'asc',
@@ -91,7 +91,7 @@ class SortOrderTest extends TestCase
         );
     }
 
-    public function test_toLegacyOrderWay_desc()
+    public function testToLegacyOrderWayDesc()
     {
         $this->assertEquals(
             'desc',
@@ -106,15 +106,15 @@ class SortOrderTest extends TestCase
     {
         return [
             [['entity'    => 'product',
-            'field'      => 'name',
-            'direction'  => 'asc']]
+                'field'      => 'name',
+                'direction'  => 'asc', ]],
         ];
     }
 
     /**
      * @dataProvider serialization_examples
      */
-    public function test_serialization($data)
+    public function testSerialization($data)
     {
         $opt = new SortOrder($data['entity'], $data['field'], $data['direction']);
 

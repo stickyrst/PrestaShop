@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,7 +31,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption as PaymentOption;
 
 class Core_Payment_PaymentOptionTest extends UnitTestCase
 {
-    public function test_convertLegacyOption_converts_one_option()
+    public function testConvertLegacyOptionConvertsOneOption()
     {
         $newOption = new PaymentOption();
         $newOption
@@ -39,15 +39,14 @@ class Core_Payment_PaymentOptionTest extends UnitTestCase
             ->setLogo('http://example.com/logo.png')
             ->setAction('http://example.com/submit')
             ->setForm(null)
-            ->setInputs(array('key' => 42))
-        ;
+            ->setInputs(array('key' => 42));
 
         $legacyOption = array(
             'cta_text'  => 'Pay by bankwire',
             'logo'      => 'http://example.com/logo.png',
             'action'    => 'http://example.com/submit',
             'form'      => null,
-            'inputs'    => array('key' => 42)
+            'inputs'    => array('key' => 42),
         );
 
         $this->assertEquals(
@@ -56,7 +55,7 @@ class Core_Payment_PaymentOptionTest extends UnitTestCase
         );
     }
 
-    public function test_convertLegacyOption_converts_two_options_specified_as_one()
+    public function testConvertLegacyOptionConvertsTwoOptionsSpecifiedAsOne()
     {
         $newOption = new PaymentOption();
         $newOption
@@ -64,15 +63,14 @@ class Core_Payment_PaymentOptionTest extends UnitTestCase
             ->setLogo('http://example.com/logo.png')
             ->setAction('http://example.com/submit')
             ->setForm(null)
-            ->setInputs(array('key' => 42))
-        ;
+            ->setInputs(array('key' => 42));
 
         $singleLegacyOption = array(
             'cta_text'  => 'Pay by bankwire',
             'logo'      => 'http://example.com/logo.png',
             'action'    => 'http://example.com/submit',
             'form'      => null,
-            'inputs'    => array('key' => 42)
+            'inputs'    => array('key' => 42),
         );
 
         $legacyOption = array($singleLegacyOption, $singleLegacyOption);

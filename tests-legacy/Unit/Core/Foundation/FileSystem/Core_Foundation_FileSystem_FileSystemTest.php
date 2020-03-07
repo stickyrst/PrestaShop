@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -34,13 +34,13 @@ class Core_Foundation_FileSystem_FileSystemTest extends UnitTestCase
     private $fs;
     private $fixturesPath;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->fs = new FileSystem();
         $this->fixturesPath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
     }
 
-    public function test_joinPaths_two_paths()
+    public function testJoinPathsTwoPaths()
     {
         $this->assertEquals(
             'a' . DIRECTORY_SEPARATOR . 'b',
@@ -48,7 +48,7 @@ class Core_Foundation_FileSystem_FileSystemTest extends UnitTestCase
         );
     }
 
-    public function test_joinPaths_three_paths()
+    public function testJoinPathsThreePaths()
     {
         $this->assertEquals(
             'a' . DIRECTORY_SEPARATOR . 'b' . DIRECTORY_SEPARATOR . 'c',
@@ -57,22 +57,24 @@ class Core_Foundation_FileSystem_FileSystemTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception
      */
-    public function test_joinPaths_one_path_throws()
+    public function testJoinPathsOnePathThrows()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception::class);
+
         $this->fs->joinPaths('a');
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception
      */
-    public function test_joinPaths_zero_path_throws()
+    public function testJoinPathsZeroPathThrows()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception::class);
+
         $this->fs->joinPaths();
     }
 
-    public function test_joinPaths_normalizes_directory_separators()
+    public function testJoinPathsNormalizesDirectorySeparators()
     {
         $this->assertEquals(
             'a' . DIRECTORY_SEPARATOR . 'b' . DIRECTORY_SEPARATOR . 'c' . DIRECTORY_SEPARATOR . 'd',
@@ -80,14 +82,14 @@ class Core_Foundation_FileSystem_FileSystemTest extends UnitTestCase
         );
     }
 
-    public function test_listEntriesRecursively()
+    public function testListEntriesRecursively()
     {
         $expectedPaths = array(
             $this->fs->joinPaths($this->fixturesPath, 'a'),
             $this->fs->joinPaths($this->fixturesPath, 'a', 'a.tmp'),
             $this->fs->joinPaths($this->fixturesPath, 'a', 'b'),
             $this->fs->joinPaths($this->fixturesPath, 'a', 'b', 'b.file'),
-            $this->fs->joinPaths($this->fixturesPath, 'toplevel.txt')
+            $this->fs->joinPaths($this->fixturesPath, 'toplevel.txt'),
         );
 
         $this->assertEquals(
@@ -96,12 +98,12 @@ class Core_Foundation_FileSystem_FileSystemTest extends UnitTestCase
         );
     }
 
-    public function test_listFilesRecursively()
+    public function testListFilesRecursively()
     {
         $expectedPaths = array(
             $this->fs->joinPaths($this->fixturesPath, 'a', 'a.tmp'),
             $this->fs->joinPaths($this->fixturesPath, 'a', 'b', 'b.file'),
-            $this->fs->joinPaths($this->fixturesPath, 'toplevel.txt')
+            $this->fs->joinPaths($this->fixturesPath, 'toplevel.txt'),
         );
 
         $this->assertEquals(
@@ -112,19 +114,21 @@ class Core_Foundation_FileSystem_FileSystemTest extends UnitTestCase
 
     /**
      * Rationale: ls /some/non/existing/file => ls: cannot access /some/non/existing/file: No such file or directory
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception
      */
-    public function test_listEntriesRecursively_throws_if_path_does_not_exist()
+    public function testListEntriesRecursivelyThrowsIfPathDoesNotExist()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception::class);
+
         $this->fs->listEntriesRecursively('/some/w/h/e/r/e/over/the/rainbow');
     }
 
     /**
      *
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception
      */
-    public function test_listEntriesRecursively_throws_when_path_is_a_file()
+    public function testListEntriesRecursivelyThrowsWhenPathIsAFile()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\Filesystem\Exception::class);
+
         $this->fs->listEntriesRecursively(__FILE__);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,19 +16,19 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Classes;
 
+use Configuration;
 use PHPUnit\Framework\TestCase;
 use PrestaShopAutoload;
-use Configuration;
 
 class PrestaShopAutoloadTest extends TestCase
 {
@@ -44,8 +44,8 @@ class PrestaShopAutoloadTest extends TestCase
 
     public function testGenerateIndex()
     {
-        $this->assertTrue(file_exists($this->file_index));
-        $data = include($this->file_index);
+        $this->assertFileExists($this->file_index);
+        $data = include $this->file_index;
         $this->assertEquals($data['OrderControllerCore']['path'], 'controllers/front/OrderController.php');
     }
 
@@ -66,18 +66,20 @@ class PrestaShopAutoloadTest extends TestCase
         Configuration::updateGlobalValue('PS_DISABLE_OVERRIDES', 1);
         @mkdir(_PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'override/classes/', 0777, true);
         define('_PS_HOST_MODE_', 1);
-        file_put_contents(_PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'override/classes/Connection.php',
+        file_put_contents(
+            _PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'override/classes/Connection.php',
             '<?php 
             class Connection extends ConnectionCore {
-        }');
+        }'
+        );
         PrestaShopAutoload::getInstance()->generateIndex();
-        $this->assertTrue(file_exists($this->file_index));
-        $data = include($this->file_index);
+        $this->assertFileExists($this->file_index);
+        $data = include $this->file_index;
         $this->assertEquals($data['OrderControllerCore']['path'], 'controllers/front/OrderController.php');
         $this->assertEquals($data['Connection']['override'], false);
         Configuration::updateGlobalValue('PS_DISABLE_OVERRIDES', 0);
         PrestaShopAutoload::getInstance()->generateIndex();
-        $data = include($this->file_index);
+        $data = include $this->file_index;
         $this->assertEquals($data['Connection']['override'], true);
     }
 

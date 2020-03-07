@@ -1,5 +1,5 @@
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -15,10 +15,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -103,6 +103,17 @@ function scroll_if_anchor(href) {
 }
 
 $(document).ready(function() {
+    const $mainMenu = $('.main-menu');
+    const $navBar = $('.nav-bar');
+    const $body = $('body');
+
+    const NavBarTransitions = new NavbarTransitionHandler(
+      $navBar,
+      $mainMenu,
+      getAnimationEvent('transition', 'end'),
+      $body
+    );
+
     $(".nav-bar").find(".link-levelone").hover(function() {
         $(this).addClass("-hover");
     }, function() {
@@ -151,6 +162,8 @@ $(document).ready(function() {
     $('.nav-bar').on('click', '.menu-collapse', function() {
         $('body').toggleClass('page-sidebar-closed');
 
+        NavBarTransitions.toggle();
+
         if ($('body').hasClass('page-sidebar-closed')) {
             $('nav.nav-bar ul.main-menu > li')
                 .removeClass('ul-open open')
@@ -164,14 +177,11 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: "index.php",
+            url: $(this).data('toggle-url'),
+            type: 'post',
             cache: false,
             data: {
-                token: window.employee_token,
-                ajax: 1,
-                action: 'toggleMenu',
-                tab: 'AdminEmployees',
-                collapse: Number($('body').hasClass('page-sidebar-closed'))
+                shouldCollapse: Number($('body').hasClass('page-sidebar-closed'))
             },
         });
     });

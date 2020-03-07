@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,33 +16,33 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Classes;
 
-use LegacyTests\TestCase\UnitTestCase;
-
 use Hook;
+
+use LegacyTests\TestCase\UnitTestCase;
 
 class HookTest extends UnitTestCase
 {
-    public function test_isDisplayHookName__display_hooks_start_with_display()
+    public function testIsDisplayHookNameDisplayHooksStartWithDisplay()
     {
         $this->assertTrue(Hook::isDisplayHookName('displaySomething'));
     }
 
-    public function test_isDisplayHookName__display_hooks_cannot_start_with_action()
+    public function testIsDisplayHookNameDisplayHooksCannotStartWithAction()
     {
         $this->assertFalse(Hook::isDisplayHookName('actionDoWeirdStuff'));
     }
 
-    public function test_isDisplayHookName__header_is_not_a_display_hook()
+    public function testIsDisplayHookNameHeaderIsNotADisplayHook()
     {
         $this->assertFalse(Hook::isDisplayHookName('header'));
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -28,10 +28,10 @@ namespace LegacyTests\Integration\PrestaShopBundle\Controller\Admin\Improve\Desi
 
 use Cache;
 use Hook;
-use Module;
-use Symfony\Component\HttpFoundation\Response;
 use LegacyTests\Integration\PrestaShopBundle\Test\WebTestCase;
+use Module;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group demo
@@ -41,7 +41,7 @@ class PositionsControllerTest extends WebTestCase
     protected $moduleId;
     protected $hookId;
 
-    public function setUp()
+    protected function setUp()
     {
         Cache::clear();
         Module::clearStaticCache();
@@ -49,7 +49,7 @@ class PositionsControllerTest extends WebTestCase
         parent::setUp();
 
         if (!Module::isInstalled('ps_emailsubscription')) {
-            /* @var ModuleManager */
+            /** @var ModuleManager */
             $moduleManager = self::$kernel->getContainer()->get('prestashop.module.manager');
             $moduleManager->install('ps_emailsubscription');
         }
@@ -76,7 +76,7 @@ class PositionsControllerTest extends WebTestCase
                         $this->moduleId
                     ),
                     'aa_dd',
-                    'something'
+                    'something',
                 ],
             ]
         );
@@ -94,7 +94,8 @@ class PositionsControllerTest extends WebTestCase
         );
         $this->assertContains(
             'This module cannot be loaded.',
-            $messages['error']
+            $messages['error'],
+            print_r($messages['error'], true)
         );
         $this->assertContains(
             'Hook cannot be loaded.',

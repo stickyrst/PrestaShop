@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -30,14 +30,12 @@ use Cache;
 use Configuration;
 use Context;
 use Db;
+use Phake;
+use PrestaShop\PrestaShop\Adapter\ServiceLocator;
 use PrestaShop\PrestaShop\Core\ContainerBuilder;
 use PrestaShop\PrestaShop\Core\Foundation\IoC\Container;
-use PrestaShop\PrestaShop\Adapter\ServiceLocator;
-use Phake;
-use Symfony\Component\HttpKernel\Kernel;
-use LegacyTests\TestCase\FakeEntityMapper;
-use LegacyTests\TestCase\FakeConfiguration;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Kernel;
 
 class UnitTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -92,7 +90,7 @@ class UnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public function setupDatabaseMock($mock = null)
     {
-        if (is_null($mock)) {
+        if (null === $mock) {
             $this->database = Phake::mock('Db');
         } else {
             $this->database = $mock;
@@ -122,7 +120,7 @@ class UnitTestCase extends \PHPUnit\Framework\TestCase
         Phake::when($this->context)->cloneContext()->thenReturn($this->context);
 
         $this->context->shop = Phake::mock('Shop');
-        $this->context->controller = new \stdClass;
+        $this->context->controller = new \stdClass();
         Context::setInstanceForTesting($this->context);
 
         $this->cache = Phake::mock('Cache');
@@ -194,6 +192,7 @@ class UnitTestCase extends \PHPUnit\Framework\TestCase
             '\\PrestaShop\\PrestaShop\\Core\\ConfigurationInterface',
             $fakeConfiguration
         );
+
         return $fakeConfiguration;
     }
 
@@ -207,7 +206,7 @@ class UnitTestCase extends \PHPUnit\Framework\TestCase
         return $this->sfKernel;
     }
 
-    public function teardown()
+    protected function teardown()
     {
         Cache::deleteTestingInstance();
         Db::deleteTestingInstance();
@@ -226,15 +225,15 @@ class UnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-    * Call protected/private method of a class.
-    *
-    * @param object &$object    Instantiated object that we will run method on.
-    * @param string $methodName Method name to call
-    * @param array  $parameters Array of parameters to pass into method.
-    *
-    * @return mixed Method return.
-    * @link https://jtreminio.com/2013/03/unit-testing-tutorial-part-3-testing-protected-private-methods-coverage-reports-and-crap/
-    */
+     * Call protected/private method of a class.
+     *
+     * @param object &$object    Instantiated object that we will run method on.
+     * @param string $methodName Method name to call
+     * @param array  $parameters Array of parameters to pass into method.
+     *
+     * @return mixed Method return.
+     * @link https://jtreminio.com/2013/03/unit-testing-tutorial-part-3-testing-protected-private-methods-coverage-reports-and-crap/
+     */
     protected function invokeMethod(&$object, $methodName, array $parameters = array())
     {
         $reflection = new \ReflectionClass(get_class($object));

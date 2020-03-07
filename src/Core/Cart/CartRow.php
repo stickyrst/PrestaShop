@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2017 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2017 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -119,6 +119,11 @@ class CartRow
     /**
      * @var AmountImmutable
      */
+    protected $initialTotalPrice;
+
+    /**
+     * @var AmountImmutable
+     */
     protected $finalUnitPrice;
 
     /**
@@ -204,6 +209,22 @@ class CartRow
     }
 
     /**
+     * Returns the initial total price (ie without applying cart rules).
+     *
+     * @return AmountImmutable
+     *
+     * @throws \Exception
+     */
+    public function getInitialTotalPrice()
+    {
+        if (!$this->isProcessed) {
+            throw new \Exception('Row must be processed before getting its total');
+        }
+
+        return $this->initialTotalPrice;
+    }
+
+    /**
      * return final price: initial minus the cart rule discounts.
      *
      * @return AmountImmutable
@@ -248,10 +269,11 @@ class CartRow
         $quantity = (int) $rowData['cart_quantity'];
         $this->initialUnitPrice = $this->getProductPrice($cart, $rowData);
         // store not rounded values
-        $this->finalTotalPrice = new AmountImmutable(
+        $this->initialTotalPrice = new AmountImmutable(
             $this->initialUnitPrice->getTaxIncluded() * $quantity,
             $this->initialUnitPrice->getTaxExcluded() * $quantity
         );
+        $this->finalTotalPrice = clone $this->initialTotalPrice;
         $this->applyRound();
         // store state
         $this->isProcessed = true;
@@ -372,6 +394,7 @@ class CartRow
                     $this->initialUnitPrice->getTaxIncluded() * $quantity,
                     $this->initialUnitPrice->getTaxExcluded() * $quantity
                 );
+
                 break;
             case self::ROUND_MODE_LINE:
                 // round line result
@@ -379,6 +402,7 @@ class CartRow
                     $tools->round($this->initialUnitPrice->getTaxIncluded() * $quantity, $this->precision),
                     $tools->round($this->initialUnitPrice->getTaxExcluded() * $quantity, $this->precision)
                 );
+
                 break;
 
             case self::ROUND_MODE_ITEM:
@@ -392,6 +416,7 @@ class CartRow
                     $this->initialUnitPrice->getTaxIncluded() * $quantity,
                     $this->initialUnitPrice->getTaxExcluded() * $quantity
                 );
+
                 break;
         }
     }

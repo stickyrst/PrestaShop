@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,16 +16,16 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use PrestaShop\PrestaShop\Adapter\Search\SearchProductSearchProvider;
 use PrestaShop\PrestaShop\Core\Product\Search\ProductSearchQuery;
 use PrestaShop\PrestaShop\Core\Product\Search\SortOrder;
-use PrestaShop\PrestaShop\Adapter\Search\SearchProductSearchProvider;
 
 class SearchControllerCore extends ProductListingFrontController
 {
@@ -53,11 +53,23 @@ class SearchControllerCore extends ProductListingFrontController
         $this->search_tag = Tools::getValue('tag');
 
         $this->context->smarty->assign(
-            array(
+            [
                 'search_string' => $this->search_string,
                 'search_tag' => $this->search_tag,
-            )
+            ]
         );
+    }
+
+    /**
+     * Ensure that no search results page is indexed by search engines.
+     */
+    public function getTemplateVarPage()
+    {
+        $page = parent::getTemplateVarPage();
+
+        $page['meta']['robots'] = 'noindex';
+
+        return $page;
     }
 
     /**
@@ -67,7 +79,7 @@ class SearchControllerCore extends ProductListingFrontController
     {
         parent::initContent();
 
-        $this->doProductSearch('catalog/listing/search', array('entity' => 'search'));
+        $this->doProductSearch('catalog/listing/search', ['entity' => 'search']);
     }
 
     protected function getProductSearchQuery()
@@ -90,6 +102,17 @@ class SearchControllerCore extends ProductListingFrontController
 
     public function getListingLabel()
     {
-        return $this->getTranslator()->trans('Search results', array(), 'Shop.Theme.Catalog');
+        return $this->getTranslator()->trans('Search results', [], 'Shop.Theme.Catalog');
+    }
+
+    public function getBreadcrumbLinks()
+    {
+        $breadcrumb = parent::getBreadcrumbLinks();
+        $breadcrumb['links'][] = [
+            'title' => $this->getTranslator()->trans('Search results', [], 'Shop.Theme.Catalog'),
+            'url' => $this->getCurrentUrl(),
+        ];
+
+        return $breadcrumb;
     }
 }

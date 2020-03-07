@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -51,24 +51,15 @@ final class DeleteCategoryHandler extends AbstractDeleteCategoryHandler implemen
         $category = new Category($categoryIdValue);
 
         if (!$category->id) {
-            throw new CategoryNotFoundException(
-                sprintf('Category with id %s cannot be found.', var_export($categoryIdValue, true))
-            );
+            throw new CategoryNotFoundException($command->getCategoryId(), sprintf('Category with id %s cannot be found.', var_export($categoryIdValue, true)));
         }
 
         if ($category->isRootCategoryForAShop()) {
-            throw new CannotDeleteRootCategoryForShopException(
-                sprintf(
-                    'Shop\'s root category with id %s cannot be deleted.',
-                    var_export($categoryIdValue, true)
-                )
-            );
+            throw new CannotDeleteRootCategoryForShopException(sprintf('Shop\'s root category with id %s cannot be deleted.', var_export($categoryIdValue, true)));
         }
 
         if (!$category->delete()) {
-            throw new FailedToDeleteCategoryException(
-                sprintf('Failed to delete category with id %s', var_export($categoryIdValue, true))
-            );
+            throw new FailedToDeleteCategoryException(sprintf('Failed to delete category with id %s', var_export($categoryIdValue, true)));
         }
 
         $this->handleProductsUpdate((int) $category->id_parent, $command->getDeleteMode());

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,19 +16,20 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
 namespace LegacyTests\Unit\Adapter\Module\PrestaTrust;
 
 use Doctrine\Common\Cache\ArrayCache;
+use LegacyTests\TestCase\UnitTestCase;
 use PrestaShop\PrestaShop\Adapter\Module\Module;
 use PrestaShop\PrestaShop\Adapter\Module\PrestaTrust\PrestaTrustChecker;
-use LegacyTests\TestCase\UnitTestCase;
 
 /**
  * @runInSeparateProcess
@@ -59,7 +60,7 @@ class PrestaTrustCheckerTest extends UnitTestCase
      */
     protected $modulePresenter;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setup();
         if (!defined('__PS_BASE_URI__')) {
@@ -71,14 +72,14 @@ class PrestaTrustCheckerTest extends UnitTestCase
         $this->modules = array(
             // Module under dev, not concerned by PrestaTrust checks
             'module-under-dev' => new Module(array(
-                'name' => 'module-under-dev'
+                'name' => 'module-under-dev',
             )),
             // Module with Pico from Addons
             'module-verified-from-addons-api' => new Module(array(
                 'name' => 'module-verified-from-addons-api',
                 'prestatrust' => (object)array(
                     'pico' => 'https://www.addons.prestashop.com/random-url.jpg',
-                )
+                ),
             )),
             // Module with PrestaTrust content
             'module-prestatrust-checked' => new Module(array(
@@ -88,7 +89,7 @@ class PrestaTrustCheckerTest extends UnitTestCase
                     'pico' => 'https://www.addons.prestashop.com/random-url.jpg',
                 ),
             ), array(
-                'path' => __DIR__.'/../../../../resources/modules/ganalytics/'
+                'path' => __DIR__.'/../../../../resources/modules/ganalytics/',
             )),
         );
 
@@ -161,8 +162,8 @@ class PrestaTrustCheckerTest extends UnitTestCase
         $testedModule = $this->modules['module-verified-from-addons-api'];
         $presentedModule = $this->modulePresenter->present($testedModule);
 
-        $this->assertTrue(array_key_exists('picos', $presentedModule['attributes']));
-        $this->assertFalse(empty($presentedModule['attributes']['picos']));
+        $this->assertArrayHasKey('picos', $presentedModule['attributes']);
+        $this->assertNotEmpty($presentedModule['attributes']['picos']);
     }
 
     /**
@@ -177,8 +178,8 @@ class PrestaTrustCheckerTest extends UnitTestCase
         $testedModule = $this->modules['module-under-dev'];
         $presentedModule = $this->modulePresenter->present($testedModule);
 
-        $this->assertTrue(array_key_exists('picos', $presentedModule['attributes']));
-        $this->assertTrue(empty($presentedModule['attributes']['picos']));
+        $this->assertArrayHasKey('picos', $presentedModule['attributes']);
+        $this->assertEmpty($presentedModule['attributes']['picos']);
     }
 
     /**
@@ -207,6 +208,7 @@ class PrestaTrustCheckerTest extends UnitTestCase
                 'message' => 'Module is authenticated.',
                 'pico' => 'https://www.addons.prestashop.com/random-url.jpg',
             ),
-            $presentedModule['attributes']['prestatrust']);
+            $presentedModule['attributes']['prestatrust']
+        );
     }
 }

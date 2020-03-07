@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -35,14 +35,14 @@ class SearchEngineCore extends ObjectModel
     /**
      * @see ObjectModel::$definition
      */
-    public static $definition = array(
+    public static $definition = [
         'table' => 'search_engine',
         'primary' => 'id_search_engine',
-        'fields' => array(
-            'server' => array('type' => self::TYPE_STRING, 'validate' => 'isUrl', 'required' => true),
-            'getvar' => array('type' => self::TYPE_STRING, 'validate' => 'isModuleName', 'required' => true),
-        ),
-    );
+        'fields' => [
+            'server' => ['type' => self::TYPE_STRING, 'validate' => 'isUrl', 'required' => true],
+            'getvar' => ['type' => self::TYPE_STRING, 'validate' => 'isModuleName', 'required' => true],
+        ],
+    ];
 
     /**
      * Get keywords.
@@ -62,7 +62,7 @@ class SearchEngineCore extends ObjectModel
             $host = &$row['server'];
             $varname = &$row['getvar'];
             if (strstr($parsedUrl['host'], $host)) {
-                $array = array();
+                $array = [];
                 preg_match('/[^a-z]' . $varname . '=.+\&/U', $parsedUrl['query'], $array);
                 if (empty($array[0])) {
                     preg_match('/[^a-z]' . $varname . '=.+$/', $parsedUrl['query'], $array);

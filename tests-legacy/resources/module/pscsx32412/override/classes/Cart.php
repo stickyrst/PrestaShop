@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,15 +16,13 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-
-
 
 class Cart extends CartCore
 {
@@ -68,7 +66,8 @@ class Cart extends CartCore
             return false;
         }
 
-        $uploaded_files = Db::getInstance()->executeS('
+        $uploaded_files = Db::getInstance()->executeS(
+            '
 			SELECT cd.`value`
 			FROM `'._DB_PREFIX_.'customized_data` cd
 			INNER JOIN `'._DB_PREFIX_.'customization` c ON (cd.`id_customization`= c.`id_customization`)
@@ -80,7 +79,8 @@ class Cart extends CartCore
             unlink(_PS_UPLOAD_DIR_.$must_unlink['value']);
         }
 
-        Db::getInstance()->execute('
+        Db::getInstance()->execute(
+            '
 			DELETE FROM `'._DB_PREFIX_.'customized_data`
 			WHERE `id_customization` IN (
 				SELECT `id_customization`
@@ -89,7 +89,8 @@ class Cart extends CartCore
 			)'
         );
 
-        Db::getInstance()->execute('
+        Db::getInstance()->execute(
+            '
 			DELETE FROM `'._DB_PREFIX_.'customization`
 			WHERE `id_cart` = '.(int)$this->id
         );

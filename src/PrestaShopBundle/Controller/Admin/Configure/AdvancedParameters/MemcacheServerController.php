@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -28,9 +28,10 @@ namespace PrestaShopBundle\Controller\Admin\Configure\AdvancedParameters;
 
 use PrestaShop\PrestaShop\Adapter\Cache\MemcacheServerManager;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use PrestaShopBundle\Security\Annotation\DemoRestricted;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use PrestaShopBundle\Security\Voter\PageVoter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,12 +42,18 @@ class MemcacheServerController extends FrameworkBundleAdminController
 {
     const CONTROLLER_NAME = 'AdminPerformance';
 
+    /**
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message="Access denied.")
+     *
+     * @return JsonResponse
+     */
     public function listAction()
     {
         return new JsonResponse($this->getMemcacheManager()->getServers());
     }
 
     /**
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message="Access denied.")
      * @DemoRestricted(redirectRoute="admin_servers_test")
      *
      * @param Request $request
@@ -64,13 +71,14 @@ class MemcacheServerController extends FrameworkBundleAdminController
                     $queryValues->getInt('server_port')
                 );
 
-            return new JsonResponse(array('test' => $isValid));
+            return new JsonResponse(['test' => $isValid]);
         }
 
-        return new JsonResponse(array('errors' => 'error'), Response::HTTP_BAD_REQUEST);
+        return new JsonResponse(['errors' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
     /**
+     * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))", message="Access denied.")
      * @DemoRestricted(redirectRoute="admin_servers_test")
      *
      * @param Request $request
@@ -81,19 +89,19 @@ class MemcacheServerController extends FrameworkBundleAdminController
     {
         if (!in_array(
             $this->authorizationLevel($this::CONTROLLER_NAME),
-            array(
+            [
                 PageVoter::LEVEL_READ,
                 PageVoter::LEVEL_UPDATE,
                 PageVoter::LEVEL_CREATE,
                 PageVoter::LEVEL_DELETE,
-            )
+            ]
         )) {
             return new JsonResponse(
-                array(
-                    'errors' => array(
+                [
+                    'errors' => [
                         $this->trans('You do not have permission to create this.', 'Admin.Notifications.Error'),
-                    ),
-                ),
+                    ],
+                ],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -113,23 +121,23 @@ class MemcacheServerController extends FrameworkBundleAdminController
                     $postValues->get('server_ip'),
                     $postValues->getInt('server_port'),
                     $postValues->get('server_weight')
-                )
-            ;
+                );
 
             return new JsonResponse($server, 201);
         }
 
         return new JsonResponse(
-            array(
-                'errors' => array(
+            [
+                'errors' => [
                     $this->trans('The Memcached server cannot be added.', 'Admin.Advparameters.Notification'),
-                ),
-            ),
+                ],
+            ],
             Response::HTTP_BAD_REQUEST
         );
     }
 
     /**
+     * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", message="Access denied.")
      * @DemoRestricted(redirectRoute="admin_servers_test")
      *
      * @param Request $request
@@ -140,19 +148,19 @@ class MemcacheServerController extends FrameworkBundleAdminController
     {
         if (!in_array(
             $this->authorizationLevel($this::CONTROLLER_NAME),
-            array(
+            [
                 PageVoter::LEVEL_READ,
                 PageVoter::LEVEL_UPDATE,
                 PageVoter::LEVEL_CREATE,
                 PageVoter::LEVEL_DELETE,
-            )
+            ]
         )) {
             return new JsonResponse(
-                array(
-                    'errors' => array(
+                [
+                    'errors' => [
                         $this->trans('You do not have permission to delete this.', 'Admin.Notifications.Error'),
-                    ),
-                ),
+                    ],
+                ],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -164,14 +172,14 @@ class MemcacheServerController extends FrameworkBundleAdminController
         }
 
         return new JsonResponse(
-            array(
-                'errors' => array(
+            [
+                'errors' => [
                     $this->trans(
                         'There was an error when attempting to delete the Memcached server.',
                         'Admin.Advparameters.Notification'
                     ),
-                ),
-            ),
+                ],
+            ],
             Response::HTTP_BAD_REQUEST
         );
     }

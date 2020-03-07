@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,7 +31,7 @@ namespace PrestaShopBundle\Utils;
  */
 class FloatParser
 {
-    private static $translationTable = array(
+    private static $translationTable = [
         // arabic numbers
         '٠' => '0',
         '١' => '1',
@@ -54,7 +54,7 @@ class FloatParser
         '۷' => '7',
         '۸' => '8',
         '۹' => '9',
-    );
+    ];
 
     /**
      * Constructs a float value from an arbitrarily-formatted string.
@@ -104,9 +104,7 @@ class FloatParser
 
         foreach ($split as $part) {
             if ('' === $part) {
-                throw new \InvalidArgumentException(
-                    sprintf('Invalid argument: "%s" cannot be interpreted as a number', $value)
-                );
+                throw new \InvalidArgumentException(sprintf('Invalid argument: "%s" cannot be interpreted as a number', $value));
             }
         }
 

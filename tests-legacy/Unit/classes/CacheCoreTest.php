@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,25 +16,24 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Classes;
 
-use PrestaShop\PrestaShop\Adapter\Entity\CacheMemcache;
-use PHPUnit_Framework_TestCase;
 use Cache;
+use PHPUnit\Framework\TestCase;
 
-class CacheCoreTest extends PHPUnit_Framework_TestCase
+class CacheCoreTest extends TestCase
 {
     private $cacheArray = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -51,7 +50,7 @@ class CacheCoreTest extends PHPUnit_Framework_TestCase
         Cache::setInstanceForTesting($memcachedMock);
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         $this->cacheArray = array();
     }
@@ -129,7 +128,7 @@ class CacheCoreTest extends PHPUnit_Framework_TestCase
     public function testSetQueryWithCacheFull()
     {
         Cache::getInstance()->setMaxCachedObjectsByTable(2);
-        
+
         $queries = $this->selectDataProvider();
         $i = 0;
         foreach ($queries as $query) {
@@ -150,6 +149,7 @@ class CacheCoreTest extends PHPUnit_Framework_TestCase
                 // check the query hash is in the table map
                 $this->assertCount(2, $this->cacheArray[$tableCacheKey]);
             }
+
             break;
         }
 
@@ -232,7 +232,7 @@ class CacheCoreTest extends PHPUnit_Framework_TestCase
         $invalidatedKeys = $this->cacheArray[$tableMapKey];
 
         $this->assertArrayHasKey($tableMapKey, $this->cacheArray);
-        
+
         Cache::getInstance()->deleteQuery('SELECT name FROM ps_configuration WHERE id = 1');
 
         $this->assertArrayNotHasKey($tableMapKey, $this->cacheArray);
@@ -280,7 +280,6 @@ class CacheCoreTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($counter, $this->cacheArray[$tableCacheKey][$queryHash]['count']);
         }
     }
-
 
     // --- providers ---
 

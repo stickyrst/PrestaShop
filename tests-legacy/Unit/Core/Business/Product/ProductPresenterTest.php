@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,26 +16,21 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Core\Product;
 
-use Phake;
-use LegacyTests\TestCase\UnitTestCase;
-use PrestaShop\PrestaShop\Core\Product\ProductPresentationSettings;
-use PrestaShop\PrestaShop\Core\Price\PricePresenterInterface;
-use Product;
 use Language;
-use Link;
-use Context;
-use Adapter_ProductPriceCalculator;
+use LegacyTests\TestCase\UnitTestCase;
+use Phake;
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter as BasePricePresenter;
+use PrestaShop\PrestaShop\Core\Product\ProductPresentationSettings;
 
 class PriceFormatter extends BasePricePresenter
 {
@@ -43,6 +38,7 @@ class PriceFormatter extends BasePricePresenter
     {
         return $price;
     }
+
     public function format($price, $currency = null)
     {
         return "#$price";
@@ -51,14 +47,15 @@ class PriceFormatter extends BasePricePresenter
 
 class ProductPresenterTest extends UnitTestCase
 {
+    /** @var ProductPresentationSettings */
     private $settings;
     private $product;
     private $language;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->settings = new ProductPresentationSettings;
+        $this->settings = new ProductPresentationSettings();
 
         $this->settings->catalog_mode = false;
         $this->settings->restricted_country_mode = false;
@@ -83,7 +80,7 @@ class ProductPresenterTest extends UnitTestCase
         $this->product['new'] = false;
         $this->product['pack'] = false;
         $this->product['show_price'] = true;
-        $this->language = new Language;
+        $this->language = new Language();
     }
 
     private function _presentProduct($presenterClass, $field)
@@ -96,13 +93,13 @@ class ProductPresenterTest extends UnitTestCase
 
         $imageRetriever = Phake::mock('PrestaShop\PrestaShop\Adapter\Image\ImageRetriever');
         Phake::when($imageRetriever)->getProductImages(Phake::anyParameters())->thenReturn([
-            ['id_image' => 0, 'associatedVariants' => []]
+            ['id_image' => 0, 'associatedVariants' => []],
         ]);
 
         $presenter = new $presenterClass(
             $imageRetriever,
             $link,
-            new PriceFormatter,
+            new PriceFormatter(),
             Phake::mock('PrestaShop\PrestaShop\Adapter\Product\ProductColorsRetriever'),
             $translator
         );
@@ -130,20 +127,33 @@ class ProductPresenterTest extends UnitTestCase
         return $this->_presentProduct('PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter', $field);
     }
 
-
-    public function test_price_should_be_shown_in_catalog_mode()
+    public function testPriceShouldNotBeShownInCatalogMode()
     {
         $this->settings->catalog_mode = true;
+        $this->assertFalse($this->getPresentedProduct('show_price'));
+    }
+
+    public function testPriceShouldBeShownInCatalogModeWithPrices()
+    {
+        $this->settings->catalog_mode = true;
+        $this->settings->catalog_mode_with_prices = true;
         $this->assertTrue($this->getPresentedProduct('show_price'));
     }
 
-    public function test_price_should_shown_in_restricted_country_mode()
+    public function testPriceShouldNotBeShownInCatalogModeWithoutPrices()
+    {
+        $this->settings->catalog_mode = true;
+        $this->settings->catalog_mode_with_prices = false;
+        $this->assertFalse($this->getPresentedProduct('show_price'));
+    }
+
+    public function testPriceShouldShownInRestrictedCountryMode()
     {
         $this->settings->restricted_country_mode = true;
         $this->assertTrue($this->getPresentedProduct('show_price'));
     }
 
-    public function test_price_should_not_be_shown_if_product_not_available_for_order()
+    public function testPriceShouldNotBeShownIfProductNotAvailableForOrder()
     {
         $this->product['available_for_order'] = false;
         $this->product['show_price'] = false;
@@ -156,7 +166,7 @@ class ProductPresenterTest extends UnitTestCase
         $this->assertTrue($this->getPresentedProduct('show_price'));
     }
 
-    public function test_price_is_tax_excluded()
+    public function testPriceIsTaxExcluded()
     {
         $this->settings->include_taxes = false;
         $this->product['price_tax_exc'] = 8;
@@ -166,7 +176,7 @@ class ProductPresenterTest extends UnitTestCase
         );
     }
 
-    public function test_price_is_tax_included()
+    public function testPriceIsTaxIncluded()
     {
         $this->settings->include_taxes = true;
         $this->product['price'] = 16;
@@ -176,7 +186,7 @@ class ProductPresenterTest extends UnitTestCase
         );
     }
 
-    public function test_cannot_add_to_cart_if_not_customized()
+    public function testCannotAddToCartIfNotCustomized()
     {
         $this->product['customization_required'] = true;
         $this->assertNotEquals(
@@ -185,28 +195,13 @@ class ProductPresenterTest extends UnitTestCase
         );
     }
 
-    public function test_can_add_to_cart_if_customized()
-    {
-        $this->product['customization_required'] = true;
-        $this->product['customizations'] = [
-            'fields' => [
-                ['is_customized' => true, 'required' => true]
-            ]
-        ];
-        $this->assertEquals(
-            'http://add-to-cart.url',
-            $this->getPresentedProduct('add_to_cart_url')
-        );
-    }
-
-    public function test_can_add_to_cart_if_customized_all_required_fields()
+    public function testCanAddToCartIfCustomized()
     {
         $this->product['customization_required'] = true;
         $this->product['customizations'] = [
             'fields' => [
                 ['is_customized' => true, 'required' => true],
-                ['is_customized' => false, 'required' => false]
-            ]
+            ],
         ];
         $this->assertEquals(
             'http://add-to-cart.url',
@@ -214,31 +209,44 @@ class ProductPresenterTest extends UnitTestCase
         );
     }
 
-    public function test_cannot_add_to_cart_from_listing_if_variants()
-    {
-        $this->product['id_product_attribute'] = 42;
-        $this->settings->allow_add_variant_to_cart_from_listing = false;
-        $this->assertEquals(
-            null,
-            $this->getPresentedProductForListing('add_to_cart_url')
-        );
-    }
-
-    public function test_cannot_add_to_cart_from_listing_even_when_customized()
+    public function testCanAddToCartIfCustomizedAllRequiredFields()
     {
         $this->product['customization_required'] = true;
         $this->product['customizations'] = [
             'fields' => [
-                ['is_customized' => true, 'required' => true]
-            ]
+                ['is_customized' => true, 'required' => true],
+                ['is_customized' => false, 'required' => false],
+            ],
         ];
         $this->assertEquals(
-            null,
+            'http://add-to-cart.url',
+            $this->getPresentedProduct('add_to_cart_url')
+        );
+    }
+
+    public function testCannotAddToCartFromListingIfVariants()
+    {
+        $this->product['id_product_attribute'] = 42;
+        $this->settings->allow_add_variant_to_cart_from_listing = false;
+        $this->assertNull(
             $this->getPresentedProductForListing('add_to_cart_url')
         );
     }
 
-    public function test_can_add_to_cart_from_listing_if_variants()
+    public function testCannotAddToCartFromListingEvenWhenCustomized()
+    {
+        $this->product['customization_required'] = true;
+        $this->product['customizations'] = [
+            'fields' => [
+                ['is_customized' => true, 'required' => true],
+            ],
+        ];
+        $this->assertNull(
+            $this->getPresentedProductForListing('add_to_cart_url')
+        );
+    }
+
+    public function testCanAddToCartFromListingIfVariants()
     {
         $this->product['id_product_attribute'] = 42;
         $this->settings->allow_add_variant_to_cart_from_listing = true;
@@ -248,56 +256,62 @@ class ProductPresenterTest extends UnitTestCase
         );
     }
 
-    public function test_product_has_online_only_flag_if_it_is_online_only()
+    public function testProductHasOnlineOnlyFlagIfItIsOnlineOnly()
     {
         $this->product['online_only'] = true;
         $this->assertEquals(
             ['online-only' => [
                 'type'  => 'online-only',
-                'label' => 'some label'
+                'label' => 'some label',
             ]],
             $this->getPresentedProduct('flags')
         );
     }
 
-    public function test_product_has_discount_flag_if_it_has_a_discount()
+    public function testProductHasDiscountFlagIfItHasADiscount()
     {
         $this->product['reduction'] = true;
         $this->assertEquals(
             ['discount' => [
                 'type'  => 'discount',
-                'label' => 'some label'
+                'label' => 'some label',
             ]],
             $this->getPresentedProduct('flags')
         );
     }
 
-    public function test_product_has_only_on_sale_flag_if_it_has_a_discount_and_is_on_sale()
+    public function testProductHasBothOnSaleFlagAndDiscountFlagIfItHasADiscountAndIsOnSale()
     {
         $this->product['reduction'] = true;
         $this->product['on_sale'] = true;
         $this->assertEquals(
-            ['on-sale' => [
-                'type'  => 'on-sale',
-                'label' => 'some label'
-            ]],
+            [
+                'on-sale' => [
+                    'type'  => 'on-sale',
+                    'label' => 'some label',
+                ],
+                'discount' => [
+                    'type'  => 'discount',
+                    'label' => 'some label',
+                ]
+            ],
             $this->getPresentedProduct('flags')
         );
     }
 
-    public function test_product_has_new_flag_if_it_is_new()
+    public function testProductHasNewFlagIfItIsNew()
     {
         $this->product['new'] = true;
         $this->assertEquals(
             ['new' => [
                 'type'  => 'new',
-                'label' => 'some label'
+                'label' => 'some label',
             ]],
             $this->getPresentedProduct('flags')
         );
     }
 
-    public function test_product_has_new_flag_if_condition_must_be_shown()
+    public function testProductHasNewFlagIfConditionMustBeShown()
     {
         $this->product['show_condition'] = true;
         $this->product['condition'] = 'new';
@@ -311,7 +325,7 @@ class ProductPresenterTest extends UnitTestCase
         );
     }
 
-    public function test_product_has_no_flags_if_not_available_for_order()
+    public function testProductHasNoFlagsIfNotAvailableForOrder()
     {
         $this->product['online_only'] = true;
         $this->product['available_for_order'] = false;

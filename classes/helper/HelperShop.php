@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -48,7 +48,7 @@ class HelperShopCore extends Helper
         }
 
         $tpl = $this->createTemplate('helpers/shops_list/list.tpl');
-        $tpl->assign(array(
+        $tpl->assign([
             'link' => $context->link,
             'tree' => Shop::getTree(),
             'current_shop_name' => $this->getCurrentShopName(),
@@ -60,7 +60,7 @@ class HelperShopCore extends Helper
             'is_all_context' => ($context->controller->multishop_context & Shop::CONTEXT_ALL),
             'shop_context' => $shop_context,
             'url' => $_SERVER['REQUEST_URI'] . (($_SERVER['QUERY_STRING']) ? '&' : '?') . 'setShopContext=',
-        ));
+        ]);
 
         return $tpl->fetch();
     }
@@ -79,6 +79,7 @@ class HelperShopCore extends Helper
                 foreach ($group_data['shops'] as $shop_id => $shop_data) {
                     if ($shop_id == Shop::getContextShopID()) {
                         $current_shop_name = $shop_data['name'];
+
                         break;
                     }
                 }

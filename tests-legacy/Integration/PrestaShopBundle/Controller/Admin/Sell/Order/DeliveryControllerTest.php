@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,25 +16,25 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Integration\PrestaShopBundle\Controller\Admin\Sell\Order;
 
-use Symfony\Component\HttpFoundation\Response;
 use LegacyTests\Integration\PrestaShopBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group demo
  */
 class DeliveryControllerTest extends WebTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $this->enableDemoMode();
@@ -63,9 +63,9 @@ class DeliveryControllerTest extends WebTestCase
             [
                 'form' => [
                     'options' => [
-                        'number' => 'foo'
+                        'number' => 'foo',
                     ],
-                    '_token' => $token
+                    '_token' => $token->getValue(),
                 ],
             ]
         );
@@ -88,9 +88,9 @@ class DeliveryControllerTest extends WebTestCase
             [
                 'form' => [
                     'options' => [
-                        'number' => '100'
+                        'number' => '100',
                     ],
-                    '_token' => $token
+                    '_token' => $token->getValue(),
                 ],
             ]
         );
@@ -117,9 +117,9 @@ class DeliveryControllerTest extends WebTestCase
             [
                 'slip_pdf_form' => [
                     'pdf' => [
-                        'date_from' => 'foo'
+                        'date_from' => 'foo',
                     ],
-                    '_token' => $token
+                    '_token' => $token->getValue(),
                 ],
             ]
         );
@@ -146,7 +146,7 @@ class DeliveryControllerTest extends WebTestCase
             [
                 'slip_pdf_form' => [
                     'pdf' => [],
-                    '_token' => $token
+                    '_token' => $token->getValue(),
                 ],
             ]
         );

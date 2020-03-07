@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,19 +16,20 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\PrestaShopBundle\Command;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use PrestaShopBundle\Command\ExportThemeCommand;
 use Symfony\Component\Console\Tester\CommandTester;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @group sf
@@ -50,7 +51,7 @@ class ExportThemeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function mockThemeRepository()
     {
@@ -69,7 +70,7 @@ class ExportThemeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function mockTranslator()
     {
@@ -81,7 +82,7 @@ class ExportThemeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function mockThemeExporter()
     {
@@ -93,7 +94,7 @@ class ExportThemeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function mockContainer()
     {
@@ -114,7 +115,7 @@ class ExportThemeCommandTest extends TestCase
                 $services = array(
                     'prestashop.core.addon.theme.repository' => $themeRepositoryMock,
                     'translator' => $translatorMock,
-                    'prestashop.core.addon.theme.exporter' => $themeExporterMock
+                    'prestashop.core.addon.theme.exporter' => $themeExporterMock,
                 );
 
                 return $services[$serviceId];
@@ -124,7 +125,7 @@ class ExportThemeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function mockHelperSet()
     {
@@ -139,6 +140,7 @@ class ExportThemeCommandTest extends TestCase
         $helperSetMock->method('get')
             ->with('formatter')
             ->willReturn($formatterHelperMock);
+
         return $helperSetMock;
     }
 }

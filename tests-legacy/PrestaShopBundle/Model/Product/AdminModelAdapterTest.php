@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,32 +16,32 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
 namespace LegacyTests\PrestaShopBundle\Model\Product;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use PrestaShopBundle\Model\Product\AdminModelAdapter;
-use PrestaShop\PrestaShop\Adapter\CombinationDataProvider;
 use Product;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * @group sf
  */
 class AdminModelAdapterTest extends KernelTestCase
 {
-    /* @var $adminModelAdapter AdminModelAdapter */
+    /** @var $adminModelAdapter AdminModelAdapter */
     private $adminModelAdapter;
 
     private $container;
     protected static $kernel;
 
-    /* @var $product Product */
+    /** @var $product Product */
     private $product;
 
     private function fakeFormData()
@@ -78,7 +78,7 @@ class AdminModelAdapterTest extends KernelTestCase
                 "specificPricePriority_0" => '',
                 "specificPricePriority_1" => '',
                 "specificPricePriority_2" => '',
-                "specificPricePriority_3" => ''
+                "specificPricePriority_3" => '',
             ],
             "step3" => [
                 "advanced_stock_management" => '',
@@ -118,6 +118,7 @@ class AdminModelAdapterTest extends KernelTestCase
                 "tags" => [],
                 "display_options" => [],
                 "upc" => '',
+                "mpn" => '',
                 "ean13" => '',
                 "isbn" => '',
                 "reference" => '',
@@ -126,10 +127,11 @@ class AdminModelAdapterTest extends KernelTestCase
                 "default_supplier" => '',
                 "custom_fields" => [],
                 "attachments" => [],
-                "supplier_combination_1" => []
-            ]
+                "supplier_combination_1" => [],
+            ],
         ];
     }
+
     private function fakeCombination()
     {
         return array('0' => [
@@ -141,6 +143,7 @@ class AdminModelAdapterTest extends KernelTestCase
             "ean13" => "",
             "isbn" => "",
             "upc" => "",
+            "mpn" => "",
             "wholesale_price" => "0.000000",
             "price" => "0.000000",
             "ecotax" => "0.000000",
@@ -157,7 +160,7 @@ class AdminModelAdapterTest extends KernelTestCase
             "is_color_group" => "0",
             "group_name" => "Taille",
             "attribute_name" => "L",
-            "id_attribute" => "3"
+            "id_attribute" => "3",
         ]);
     }
 
@@ -189,7 +192,8 @@ class AdminModelAdapterTest extends KernelTestCase
             $this->container->get('prestashop.adapter.data_provider.feature'),
             $this->container->get('prestashop.adapter.data_provider.pack'),
             $this->container->get('prestashop.adapter.shop.context'),
-            $this->container->get('prestashop.adapter.data_provider.tax')
+            $this->container->get('prestashop.adapter.data_provider.tax'),
+            $this->container->get('router')
         );
     }
 
@@ -237,6 +241,7 @@ class AdminModelAdapterTest extends KernelTestCase
             "attribute_ean13" => "",
             "attribute_isbn" => "",
             "attribute_upc" => "",
+            "attribute_mpn" => "",
             "attribute_wholesale_price" => "0.000000",
             "attribute_price_impact" => 0,
             "attribute_price" => "0.000000",
@@ -255,7 +260,7 @@ class AdminModelAdapterTest extends KernelTestCase
             "attribute_quantity" => 300,
             "name" => "Taille - L",
         );
-        $combinationDataProvider = new combinationDataProvider();
+        $combinationDataProvider = $this->container->get('prestashop.adapter.data_provider.combination');
         $actualReturn = $combinationDataProvider->completeCombination($this->fakeCombination(), $this->product);
 
         foreach ($expectedStructureReturn as $property => $value) {

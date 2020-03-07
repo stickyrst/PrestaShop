@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -86,11 +86,11 @@ class CachingConfiguration implements DataConfigurationInterface
      */
     public function getConfiguration()
     {
-        return array(
+        return [
             'use_cache' => $this->isCachingEnabled,
             'caching_system' => $this->cachingSystem,
             'servers' => $this->memcacheServerManager->getServers(),
-        );
+        ];
     }
 
     /**
@@ -98,7 +98,7 @@ class CachingConfiguration implements DataConfigurationInterface
      */
     public function updateConfiguration(array $configuration)
     {
-        $errors = array();
+        $errors = [];
 
         if ($this->validateConfiguration($configuration)) {
             $errors = $this->updatePhpCacheConfiguration($configuration);
@@ -126,28 +126,28 @@ class CachingConfiguration implements DataConfigurationInterface
      */
     private function updatePhpCacheConfiguration(array $configuration)
     {
-        $errors = array();
+        $errors = [];
 
         if (
             $configuration['use_cache'] !== $this->isCachingEnabled
-            && !is_null($configuration['caching_system'])
+            && null !== $configuration['caching_system']
         ) {
             $this->phpParameters->setProperty('parameters.ps_cache_enable', $configuration['use_cache']);
         }
 
         if (
-            !is_null($configuration['caching_system'])
+            null !== $configuration['caching_system']
             && $configuration['caching_system'] !== $this->cachingSystem
         ) {
             $this->phpParameters->setProperty('parameters.ps_caching', $configuration['caching_system']);
         }
 
         if (false === $this->phpParameters->saveConfiguration()) {
-            $errors[] = array(
+            $errors[] = [
                 'key' => 'The settings file cannot be overwritten.',
                 'domain' => 'Admin.Advparameters.Notification',
-                'parameters' => array(),
-            );
+                'parameters' => [],
+            ];
         }
 
         $this->symfonyCacheClearer->clear();

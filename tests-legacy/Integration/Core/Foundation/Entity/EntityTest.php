@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -32,7 +32,6 @@ use Product;
 
 class EntityTest extends IntegrationTestCase
 {
-
     /**
      * @var ContextMocker
      */
@@ -51,7 +50,7 @@ class EntityTest extends IntegrationTestCase
         $this->contextMocker->resetContext();
     }
 
-    public function test_save_activeRecord_style()
+    public function testSaveActiveRecordStyle()
     {
         $product = new Product(null, false, 1);
         $product->name = 'A Product';

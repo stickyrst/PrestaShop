@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -27,8 +27,8 @@
 namespace LegacyTests\Unit\Adapter\Cart;
 
 use Configuration;
-use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 use LegacyTests\TestCase\UnitTestCase;
+use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
 class CartPresenterTest extends UnitTestCase
 {
@@ -39,15 +39,15 @@ class CartPresenterTest extends UnitTestCase
 
     private $previousSeparator;
 
-    public function setup()
+    protected function setup()
     {
         parent::setup();
         $this->previousSeparator = Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR');
         Configuration::set('PS_ATTRIBUTE_ANCHOR_SEPARATOR', '-');
-        $this->cartPresenter = new CartPresenter;
+        $this->cartPresenter = new CartPresenter();
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         Configuration::set('PS_ATTRIBUTE_ANCHOR_SEPARATOR', $this->previousSeparator);
         parent::tearDown();

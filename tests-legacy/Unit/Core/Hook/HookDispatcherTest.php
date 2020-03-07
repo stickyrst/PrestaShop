@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,23 +16,24 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Core\Hook;
 
-use PrestaShop\PrestaShop\Adapter\Hook\HookDispatcher as HookDispatcherAdapter;
-use PrestaShopBundle\Service\Hook\RenderingHookEvent;
-use PrestaShop\PrestaShop\Core\Hook\HookInterface;
-use PrestaShop\PrestaShop\Core\Hook\HookDispatcher;
-use PrestaShop\PrestaShop\Core\Hook\RenderedHook;
-use PrestaShop\PrestaShop\Core\Hook\Hook;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PrestaShop\PrestaShop\Adapter\Hook\HookDispatcher as HookDispatcherAdapter;
+use PrestaShop\PrestaShop\Core\Hook\Hook;
+use PrestaShop\PrestaShop\Core\Hook\HookDispatcher;
+use PrestaShop\PrestaShop\Core\Hook\HookInterface;
+use PrestaShop\PrestaShop\Core\Hook\RenderedHook;
+use PrestaShopBundle\Service\Hook\RenderingHookEvent;
 
 class HookDispatcherTest extends TestCase
 {
@@ -46,7 +47,7 @@ class HookDispatcherTest extends TestCase
      */
     private $hookDispatcher;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->hookDispatcherAdapter = $this->createMock(HookDispatcherAdapter::class);
         $this->hookDispatcher = new HookDispatcher($this->hookDispatcherAdapter);
@@ -61,8 +62,7 @@ class HookDispatcherTest extends TestCase
         $this->hookDispatcherAdapter
             ->expects($this->once())
             ->method('dispatchForParameters')
-            ->with($this->equalTo('hookName'), $this->equalTo([]))
-        ;
+            ->with($this->equalTo('hookName'), $this->equalTo([]));
 
         $this->hookDispatcher->dispatchHook($hook);
     }
@@ -73,8 +73,7 @@ class HookDispatcherTest extends TestCase
         $this->hookDispatcherAdapter
             ->expects($this->once())
             ->method('dispatchForParameters')
-            ->with($this->equalTo('fooHook'), $this->equalTo(['bar' => 'Bar']))
-        ;
+            ->with($this->equalTo('fooHook'), $this->equalTo(['bar' => 'Bar']));
 
         $this->hookDispatcher->dispatchWithParameters('fooHook', ['bar' => 'Bar']);
     }
@@ -94,8 +93,7 @@ class HookDispatcherTest extends TestCase
                 $hook->getName(),
                 $hook->getParameters()
             )
-            ->willReturn($hookEvent)
-        ;
+            ->willReturn($hookEvent);
 
         $renderedHook = $this->hookDispatcher->dispatchRendering($hook);
 
@@ -119,8 +117,7 @@ class HookDispatcherTest extends TestCase
                 $hook->getName(),
                 $hook->getParameters()
             )
-            ->willReturn($hookEvent)
-        ;
+            ->willReturn($hookEvent);
 
         $renderedHook = $this->hookDispatcher->dispatchRenderingWithParameters('Baz', ['hello' => 'World']);
 
@@ -142,7 +139,7 @@ class HookDispatcherTest extends TestCase
     /**
      * The event dispatcher puts every parameter dispatched in an array.
      * @param array $parameters
-     * @return \PHPUnit_Framework_MockObject_MockObject|RenderingHookEvent
+     * @return MockObject|RenderingHookEvent
      */
     private function createRenderingHookEvent($parameters = [])
     {

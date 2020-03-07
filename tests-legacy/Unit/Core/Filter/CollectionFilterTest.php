@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -29,9 +29,8 @@ namespace LegacyTests\Unit\Core\Filter;
 use PrestaShop\PrestaShop\Core\Filter\CollectionFilter;
 use PrestaShop\PrestaShop\Core\Filter\HashMapWhitelistFilter;
 
-class CollectionFilterTest extends \PHPUnit_Framework_TestCase
+class CollectionFilterTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
      * @param array $subject
      * @param array $queue
@@ -57,7 +56,7 @@ class CollectionFilterTest extends \PHPUnit_Framework_TestCase
             [
                 'foo' => 'something',
                 'bar' => null,
-                'baz' => []
+                'baz' => [],
             ],
             [
                 'foo' => 'something',
@@ -66,7 +65,7 @@ class CollectionFilterTest extends \PHPUnit_Framework_TestCase
                 'bar' => null,
                 'baz' => [],
             ],
-            []
+            [],
         ];
 
         return [
@@ -74,7 +73,7 @@ class CollectionFilterTest extends \PHPUnit_Framework_TestCase
                 'subject' => $subject,
                 'queue' => [
                     (new HashMapWhitelistFilter())
-                        ->whitelist(['foo'])
+                        ->whitelist(['foo']),
                 ],
                 'expectedResult' => [
                     [
@@ -85,9 +84,8 @@ class CollectionFilterTest extends \PHPUnit_Framework_TestCase
                     ],
                     [],
                     [],
-                ]
-            ]
+                ],
+            ],
         ];
     }
-
 }

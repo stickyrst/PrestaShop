@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,21 +16,20 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\PrestaShopBundle\Routing;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\DependencyInjection\Container;
 use LegacyTests\TestCase\Module as HelperModule;
-
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Routing\Route;
 
 class YamlRoutesInModuleTest extends KernelTestCase
 {
@@ -47,7 +46,7 @@ class YamlRoutesInModuleTest extends KernelTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp()
     {
         $kernel = self::createKernel();
         $kernel->boot();
@@ -64,7 +63,7 @@ class YamlRoutesInModuleTest extends KernelTestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown()
     {
         HelperModule::removeModule('demo');
         $this->module->onUninstall();
@@ -75,11 +74,11 @@ class YamlRoutesInModuleTest extends KernelTestCase
         $router = $this->container->get('router');
         $route = $router->getRouteCollection()->get('demo_admin_demo');
 
-        self::assertInstanceOf(Route::class, $route);
+        $this->assertInstanceOf(Route::class, $route);
 
-        self::assertEquals('/modules/demo/demo', $route->getPath());
-        self::assertEquals([
-            '_controller' => 'PsTest\Controller\Admin\DemoController::demoAction'
+        $this->assertEquals('/modules/demo/demo', $route->getPath());
+        $this->assertEquals([
+            '_controller' => 'PsTest\Controller\Admin\DemoController::demoAction',
         ], $route->getDefaults());
     }
 }

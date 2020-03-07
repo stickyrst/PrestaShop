@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,21 +31,20 @@ use CheckoutProcess;
 use Context;
 use Customer;
 use Language;
-use Link;
-use Phake;
 use LegacyTests\TestCase\UnitTestCase;
+use Phake;
 
 class CheckoutAddressesStepTest extends UnitTestCase
 {
     private $step;
     private $session;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $context = new Context;
-        $context->language = new Language;
-        $context->customer = new Customer;
+        $context = new Context();
+        $context->language = new Language();
+        $context->customer = new Customer();
         $context->link = Phake::mock('Link');
         Phake::when($context->link)->getPageLink(Phake::anyParameters())->thenReturn('http://addresses-actions.url');
 
@@ -74,6 +73,7 @@ class CheckoutAddressesStepTest extends UnitTestCase
     private function setCustomerAddressesCount($n)
     {
         Phake::when($this->session)->getCustomerAddressesCount()->thenReturn($n);
+
         return $this;
     }
 
@@ -85,41 +85,41 @@ class CheckoutAddressesStepTest extends UnitTestCase
         );
     }
 
-    public function test_if_customer_has_no_addresses_then_delivery_address_form_is_open()
+    public function testIfCustomerHasNoAddressesThenDeliveryAddressFormIsOpen()
     {
         $this->setCustomerAddressesCount(0);
         $this->assertTemplateParametersInclude([
-            'show_delivery_address_form' => true
+            'show_delivery_address_form' => true,
         ]);
     }
 
-    public function test_if_customer_has_one_address_then_delivery_address_form_is_not_open()
+    public function testIfCustomerHasOneAddressThenDeliveryAddressFormIsNotOpen()
     {
         $this->setCustomerAddressesCount(1);
         $this->assertTemplateParametersInclude([
-            'show_delivery_address_form' => false
+            'show_delivery_address_form' => false,
         ]);
     }
 
-    public function test_if_customer_has_one_address_and_wants_different_invoice_then_invoice_open()
+    public function testIfCustomerHasOneAddressAndWantsDifferentInvoiceThenInvoiceOpen()
     {
         $this->setCustomerAddressesCount(1);
         $this->assertTemplateParametersInclude([
-            'show_invoice_address_form' => true
+            'show_invoice_address_form' => true,
         ], [
-            'use_same_address' => false
+            'use_same_address' => false,
         ]);
     }
 
-    public function test_when_customer_has_one_delivery_address_and_edits_it_then_is_open()
+    public function testWhenCustomerHasOneDeliveryAddressAndEditsItThenIsOpen()
     {
         $this->setCustomerAddressesCount(1);
         $this->assertTemplateParametersInclude([
             'show_delivery_address_form' => true,
-            'form_has_continue_button'   => true
+            'form_has_continue_button'   => true,
         ], [
             'editAddress'   => 'delivery',
-            'id_address'    => null
+            'id_address'    => null,
         ]);
     }
 }

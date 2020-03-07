@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,23 +16,21 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Integration\Core\Foundation\Entity;
 
-use LegacyTests\TestCase\IntegrationTestCase;
-use PrestaShop\PrestaShop\Core\ContainerBuilder;
 use CMSRole;
-use CMSRoleRepository;
 use Db;
+use LegacyTests\TestCase\IntegrationTestCase;
 use LegacyTests\Unit\ContextMocker;
-use Product;
+use PrestaShop\PrestaShop\Core\ContainerBuilder;
 
 class EntityManagerTest extends IntegrationTestCase
 {
@@ -60,7 +58,7 @@ class EntityManagerTest extends IntegrationTestCase
         $this->contextMocker->resetContext();
     }
 
-    public function test_explicitly_defined_repository_is_found_by_entitymanager()
+    public function testExplicitlyDefinedRepositoryIsFoundByEntitymanager()
     {
         $this->assertInstanceOf(
             '\\PrestaShop\\PrestaShop\\Core\\CMS\\CMSRoleRepository',
@@ -68,7 +66,7 @@ class EntityManagerTest extends IntegrationTestCase
         );
     }
 
-    public function test_find_implicitly_defined_repository()
+    public function testFindImplicitlyDefinedRepository()
     {
         $repository = $this->entityManager->getRepository('Product');
         $product = $repository->findOne(1);
@@ -76,13 +74,13 @@ class EntityManagerTest extends IntegrationTestCase
         $this->assertEquals(1, $product->id);
     }
 
-    public function test_save_dataMapper_style()
+    public function testSaveDataMapperStyle()
     {
         $repository = $this->entityManager->getRepository('CMSRole');
 
-        $entity = new CMSRole;
+        $entity = new CMSRole();
 
-        $name = "Yo CMS Role " . rand();
+        $name = "Yo CMS Role " . mt_rand(0, mt_getrandmax());
 
         $entity->name    = $name;
         $entity->id_cms = 6666;

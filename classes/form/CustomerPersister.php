@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -131,6 +131,10 @@ class CustomerPersisterCore
             }
         }
 
+        if ($customer->email != $this->context->customer->email) {
+            $customer->removeResetPasswordToken();
+        }
+
         $ok = $customer->save();
 
         if ($ok) {
@@ -194,9 +198,9 @@ class CustomerPersisterCore
             $this->context->updateCustomer($customer);
             $this->context->cart->update();
             $this->sendConfirmationMail($customer);
-            Hook::exec('actionCustomerAccountAdd', array(
+            Hook::exec('actionCustomerAccountAdd', [
                 'newCustomer' => $customer,
-            ));
+            ]);
         }
 
         return $ok;
@@ -213,14 +217,14 @@ class CustomerPersisterCore
             'account',
             $this->translator->trans(
                 'Welcome!',
-                array(),
+                [],
                 'Emails.Subject'
             ),
-            array(
+            [
                 '{firstname}' => $customer->firstname,
                 '{lastname}' => $customer->lastname,
                 '{email}' => $customer->email,
-            ),
+            ],
             $customer->email,
             $customer->firstname . ' ' . $customer->lastname
         );

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,28 +31,28 @@ use PrestaShop\PrestaShop\Adapter\Database;
 
 class AdapterDatabaseTest extends IntegrationTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->db = new Database;
+        $this->db = new Database();
     }
 
-    public function test_values_are_escaped_dataProvider()
+    public function getValuesAreEscapedDataProvider()
     {
         return array(
-            array( 'hello'       , 'hello'    ),
-            array( '\\\'inject'  , '\'inject' ),
-            array( '\\"inject'   , '"inject'  ),
-            array( 42            , 42         ),
-            array( 4.2           , 4.2        ),
-            array( '4\\\'200'    , '4\'200'   ),
+            array('hello', 'hello'),
+            array('\\\'inject', '\'inject'),
+            array('\\"inject', '"inject'),
+            array(42, 42),
+            array(4.2, 4.2),
+            array('4\\\'200', '4\'200'),
         );
     }
 
     /**
-     * @dataProvider test_values_are_escaped_dataProvider
+     * @dataProvider getValuesAreEscapedDataProvider
      */
-    public function test_values_are_escaped($expectedSanitizedValue, $unsafeInput)
+    public function testValuesAreEscaped($expectedSanitizedValue, $unsafeInput)
     {
         $this->assertEquals($expectedSanitizedValue, $this->db->escape($unsafeInput));
     }

@@ -1,5 +1,5 @@
 <!--**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -15,20 +15,31 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="tags-input search-input search d-flex flex-wrap" :class="{ 'search-with-icon': hasIcon }" @click="focus()">
+  <div
+    class="tags-input search-input search d-flex flex-wrap"
+    :class="{ 'search-with-icon': hasIcon }"
+    @click="focus()"
+  >
     <div class="tags-wrapper">
-      <span v-for="(tag, index) in tags" class="tag">{{ tag }}<i class="material-icons" @click="close(index)">close</i></span>
+      <span
+        v-for="(tag, index) in tags"
+        :key="index"
+        class="tag"
+      >{{ tag }}<i
+        class="material-icons"
+        @click="close(index)"
+      >close</i></span>
     </div>
     <input
-      ref = "tags"
+      ref="tags"
       :placeholder="placeholderToDisplay"
       type="text"
       v-model="tag"
@@ -37,14 +48,29 @@
       @keydown.enter="add(tag)"
       @keydown.delete.stop="remove()"
       :size="inputSize"
-    />
+    >
   </div>
 </template>
 
 <script>
 
   export default {
-    props: ['tags', 'placeholder', 'hasIcon'],
+    props: {
+      tags: {
+        type: Array,
+        required: false,
+        default: () => ([]),
+      },
+      placeholder: {
+        type: String,
+        required: false,
+        default: '',
+      },
+      hasIcon: {
+        type: Boolean,
+        required: false,
+      },
+    },
     computed: {
       inputSize() {
         return !this.tags.length && this.placeholder ? this.placeholder.length : 0;
@@ -81,6 +107,6 @@
         this.$refs.tags.focus();
       },
     },
-    data: () => ({ tag: null }),
+    data: () => ({tag: null}),
   };
 </script>

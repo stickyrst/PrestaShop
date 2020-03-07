@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,22 +16,21 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\PrestaShopBundle\Utils;
 
-use PrestaShopBundle\Utils\FloatParser;
 use PHPUnit\Framework\TestCase;
+use PrestaShopBundle\Utils\FloatParser;
 
 class FloatParserTest extends TestCase
 {
-
     /**
      * Given a string containing a number with arbitrary characters as thousand and decimal separators
      * When constructing an ImmutableFloat from that string
@@ -53,17 +52,19 @@ class FloatParserTest extends TestCase
      * Then an InvalidArgumentException should be thrown
      * @param mixed $value
      *
-     * @expectedException \InvalidArgumentException
      * @dataProvider provideInvalidValues
      */
     public function testItThrowsExceptionIfNotValid($value)
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         (new FloatParser())->fromString($value);
     }
 
     public function provideValidStrings()
     {
         $expected = 1234567.89;
+
         return [
             ['1234567.89', $expected],
             ['1234567,89', $expected],

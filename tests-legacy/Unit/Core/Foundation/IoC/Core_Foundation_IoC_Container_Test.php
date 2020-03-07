@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,21 +16,20 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Core\Foundation\IoC;
 
-use Exception;
+use LegacyTests\Unit\Core\Foundation\IoC\Fixtures\DepBuiltByClosure;
+use LegacyTests\Unit\Core\Foundation\IoC\Fixtures\Dummy;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Core\Foundation\IoC\Container;
-use LegacyTests\Unit\Core\Foundation\IoC\Fixtures\Dummy;
-use LegacyTests\Unit\Core\Foundation\IoC\Fixtures\DepBuiltByClosure;
 
 class Core_Foundation_IoC_Container_Test extends TestCase
 {
@@ -39,12 +38,12 @@ class Core_Foundation_IoC_Container_Test extends TestCase
      */
     private $container;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->container = new Container();
     }
 
-    public function test_bind_by_closure()
+    public function testBindByClosure()
     {
         $this->container->bind('foo', function () {
             return 'FOO';
@@ -54,18 +53,19 @@ class Core_Foundation_IoC_Container_Test extends TestCase
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\IoC\Exception
      */
-    public function test_cannot_bind_the_same_service_twice()
+    public function testCannotBindTheSameServiceTwice()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\IoC\Exception::class);
+
         $this->container->bind('foo', function () {});
         $this->container->bind('foo', function () {});
     }
 
-    public function test_bind_by_closure_instance_not_shared_by_default()
+    public function testBindByClosureInstanceNotSharedByDefault()
     {
         $this->container->bind('different', function () {
-            return new Dummy;
+            return new Dummy();
         });
 
         $first = $this->container->make('different');
@@ -74,10 +74,10 @@ class Core_Foundation_IoC_Container_Test extends TestCase
         $this->assertNotSame($first, $second);
     }
 
-    public function test_bind_by_closure_instance_shared_if_explicitely_required()
+    public function testBindByClosureInstanceSharedIfExplicitelyRequired()
     {
         $this->container->bind('same', function () {
-            return new Dummy;
+            return new Dummy();
         }, true);
 
         $first = $this->container->make('same');
@@ -86,7 +86,7 @@ class Core_Foundation_IoC_Container_Test extends TestCase
         $this->assertSame($first, $second);
     }
 
-    public function test_bind_className()
+    public function testBindClassName()
     {
         $this->container->bind('dummy', 'LegacyTests\Unit\Core\Foundation\IoC\Fixtures\Dummy');
 
@@ -95,14 +95,14 @@ class Core_Foundation_IoC_Container_Test extends TestCase
         ));
     }
 
-    public function test_make_without_bind()
+    public function testMakeWithoutBind()
     {
         $this->assertEquals('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\Dummy', get_class(
             $this->container->make('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\Dummy')
         ));
     }
 
-    public function test_classes_can_be_loaded_with_custom_namespace_prefix()
+    public function testClassesCanBeLoadedWithCustomNamespacePrefix()
     {
         $this->container->aliasNamespace('Fixtures', 'LegacyTests\Unit\Core\Foundation\IoC\Fixtures');
 
@@ -112,22 +112,23 @@ class Core_Foundation_IoC_Container_Test extends TestCase
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\IoC\Exception
      */
-    public function test_an_alias_cannot_be_changed()
+    public function testAnAliasCannotBeChanged()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\IoC\Exception::class);
+
         $this->container->aliasNamespace('Fixtures', 'LegacyTests\Unit\Core\Foundation\IoC\Fixtures');
         $this->container->aliasNamespace('Fixtures', 'LegacyTests\Unit\Core\Foundation\Other');
     }
 
-    public function test_deps_are_fetched_automagically()
+    public function testDepsAreFetchedAutomagically()
     {
         $this->assertEquals('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\ClassWithDep', get_class(
             $this->container->make('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\ClassWithDep')
         ));
     }
 
-    public function test_deps_are_fetched_automagically_When_dependsOnThingWithADefaultValue()
+    public function testDepsAreFetchedAutomagicallyWhenDependsOnThingWithADefaultValue()
     {
         $this->assertEquals('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\ClassWithDepAndDefault', get_class(
             $this->container->make('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\ClassWithDepAndDefault')
@@ -135,26 +136,29 @@ class Core_Foundation_IoC_Container_Test extends TestCase
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\IoC\Exception
      */
-    public function test_unbuildable_not_built()
+    public function testUnbuildableNotBuilt()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\IoC\Exception::class);
+
         $this->container->make('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\UnBuildable');
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\IoC\Exception
      */
-    public function test_non_existing_class_not_built()
+    public function testNonExistingClassNotBuilt()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\IoC\Exception::class);
+
         $this->container->make('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\AClassThatDoesntExistAtAll');
     }
 
     /**
-     * @expectedException \PrestaShop\PrestaShop\Core\Foundation\IoC\Exception
      */
-    public function test_dependency_loop_doesnt_crash_container()
+    public function testDependencyLoopDoesntCrashContainer()
     {
+        $this->expectException(\PrestaShop\PrestaShop\Core\Foundation\IoC\Exception::class);
+
         /**
          * CycleA depends on CycleB,
          * CycleB depends on CycleA
@@ -162,7 +166,7 @@ class Core_Foundation_IoC_Container_Test extends TestCase
         $this->container->make('LegacyTests\Unit\Core\Foundation\IoC\Fixtures\CycleA');
     }
 
-    public function test_can_build_class_whose_dependency_is_buit_by_closure()
+    public function testCanBuildClassWhoseDependencyIsBuitByClosure()
     {
         $this->container->bind(
             'LegacyTests\Unit\Core\Foundation\IoC\Fixtures\DepBuiltByClosure',
@@ -183,26 +187,27 @@ class Core_Foundation_IoC_Container_Test extends TestCase
     public function valuesToBind()
     {
         return array(
-            array(new Dummy),
+            array(new Dummy()),
             array(42),
-            array(array(1, 2, 3))
+            array(array(1, 2, 3)),
         );
     }
 
     /**
      * @dataProvider valuesToBind
      */
-    public function test_container_can_bind_values_directly($value)
+    public function testContainerCanBindValuesDirectly($value)
     {
         $this->container->bind('value', $value);
         $this->assertSame($value, $this->container->make('value'));
     }
 
     /**
-     * @expectedException Exception
      */
-    public function test_container_doesnt_bind_strings_as_literal_values()
+    public function testContainerDoesntBindStringsAsLiteralValues()
     {
+        $this->expectException(\Exception::class);
+
         $this->container->bind('value', 'a string which is not a class name');
         $this->container->make('value');
     }

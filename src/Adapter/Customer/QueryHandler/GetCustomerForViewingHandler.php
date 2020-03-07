@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -40,27 +40,29 @@ use Group;
 use Language;
 use Link;
 use Order;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\AddressInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\BoughtProductInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\CartInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\CustomerInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\GeneralInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\MessageInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\OrderInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\OrdersInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\ProductsInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\DiscountInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\GroupInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\LastConnectionInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\PersonalInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\ReferrerInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\SentEmailInformation;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\Subscriptions;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Dto\ViewedProductInformation;
+use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerNotFoundException;
 use PrestaShop\PrestaShop\Core\Domain\Customer\Query\GetCustomerForViewing;
 use PrestaShop\PrestaShop\Core\Domain\Customer\QueryHandler\GetCustomerForViewingHandlerInterface;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\AddressInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\BoughtProductInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\CartInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\DiscountInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\GeneralInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\GroupInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\LastConnectionInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\MessageInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\OrderInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\OrdersInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\PersonalInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\ProductsInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\ReferrerInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\SentEmailInformation;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\Subscriptions;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\ViewableCustomer;
+use PrestaShop\PrestaShop\Core\Domain\Customer\QueryResult\ViewedProductInformation;
 use PrestaShop\PrestaShop\Core\Domain\Customer\ValueObject\CustomerId;
+use PrestaShop\PrestaShop\Core\Localization\Locale;
 use Product;
 use Referrer;
 use Shop;
@@ -70,9 +72,16 @@ use Validate;
 
 /**
  * Handles commands which gets customer for viewing in Back Office.
+ *
+ * @internal
  */
 final class GetCustomerForViewingHandler implements GetCustomerForViewingHandlerInterface
 {
+    /**
+     * @var LegacyContext
+     */
+    private $context;
+
     /**
      * @var int
      */
@@ -89,18 +98,27 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
     private $link;
 
     /**
+     * @var Locale
+     */
+    private $locale;
+
+    /**
      * @param TranslatorInterface $translator
      * @param int $contextLangId
      * @param Link $link
+     * @param Locale $locale
      */
     public function __construct(
         TranslatorInterface $translator,
         $contextLangId,
-        Link $link
+        Link $link,
+        Locale $locale
     ) {
+        $this->context = new LegacyContext();
         $this->contextLangId = $contextLangId;
         $this->translator = $translator;
         $this->link = $link;
+        $this->locale = $locale;
     }
 
     /**
@@ -115,7 +133,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
 
         Context::getContext()->customer = $customer;
 
-        return new CustomerInformation(
+        return new ViewableCustomer(
             $customerId,
             $this->getGeneralInformation($customer),
             $this->getPersonalInformation($customer),
@@ -171,8 +189,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
         $lastUpdateDate = Tools::displayDate($customer->date_upd, null, true);
         $lastVisitDate = $customerStats['last_visit'] ?
             Tools::displayDate($customerStats['last_visit'], null, true) :
-            $this->translator->trans('Never', [], 'Admin.Global')
-        ;
+            $this->translator->trans('Never', [], 'Admin.Global');
 
         $customerShop = new Shop($customer->id_shop);
         $customerLanguage = new Language($customer->id_lang);
@@ -216,8 +233,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
                 WHERE valid = 1
                     AND id_customer != ' . (int) $customerId . '
                 GROUP BY id_customer
-                HAVING SUM(total_paid_real) > ' . (int) $totalPaid
-            ;
+                HAVING SUM(total_paid_real) > ' . (int) $totalPaid;
 
             Db::getInstance()->getValue($sql);
 
@@ -242,9 +258,9 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
 
         foreach ($orders as $order) {
             $order['total_paid_real_not_formated'] = $order['total_paid_real'];
-            $order['total_paid_real'] = Tools::displayPrice(
+            $order['total_paid_real'] = $this->locale->formatPrice(
                 $order['total_paid_real'],
-                new Currency((int) $order['id_currency'])
+                Currency::getIsoCodeById((int) $order['id_currency'])
             );
 
             if (!isset($order['order_state'])) {
@@ -273,7 +289,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
         }
 
         return new OrdersInformation(
-            Tools::displayPrice($totalSpent),
+            $this->locale->formatPrice($totalSpent, $this->context->getContext()->currency->iso_code),
             $validOrders,
             $invalidOrders
         );
@@ -302,7 +318,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
             $customerCarts[] = new CartInformation(
                 sprintf('%06d', $cart->id),
                 Tools::displayDate($cart->date_add, null, true),
-                Tools::displayPrice($summary['total_price'], $currency),
+                $this->locale->formatPrice($summary['total_price'], $currency->iso_code),
                 $carrier->name
             );
         }
@@ -370,7 +386,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
 
             $viewedProducts[] = new ViewedProductInformation(
                 (int) $product->id,
-                Tools::htmlentitiesUTF8($product->name),
+                $product->name,
                 $productUrl
             );
         }
@@ -401,8 +417,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
         foreach ($messages as $message) {
             $status = isset($messageStatuses[$message['status']]) ?
                 $messageStatuses[$message['status']] :
-                $message['status']
-            ;
+                $message['status'];
 
             $customerMessages[] = new MessageInformation(
                 (int) $message['id_customer_thread'],
@@ -479,8 +494,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
         foreach ($connections as $connection) {
             $httpReferer = $connection['http_referer'] ?
                 preg_replace('/^www./', '', parse_url($connection['http_referer'], PHP_URL_HOST)) :
-                $this->translator->trans('Direct link', [], 'Admin.Orderscustomers.Notification')
-            ;
+                $this->translator->trans('Direct link', [], 'Admin.Orderscustomers.Notification');
 
             $lastConnections[] = new LastConnectionInformation(
                 $connection['id_connections'],
@@ -581,10 +595,7 @@ final class GetCustomerForViewingHandler implements GetCustomerForViewingHandler
     private function assertCustomerWasFound(CustomerId $customerId, Customer $customer)
     {
         if (!$customer->id) {
-            throw new CustomerNotFoundException(
-                $customerId,
-                sprintf('Customer with id "%s" was not found.', $customerId->getValue())
-            );
+            throw new CustomerNotFoundException($customerId, sprintf('Customer with id "%s" was not found.', $customerId->getValue()));
         }
     }
 }

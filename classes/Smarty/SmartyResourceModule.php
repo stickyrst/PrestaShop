@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -49,11 +49,11 @@ class SmartyResourceModuleCore extends Smarty_Resource_Custom
         foreach ($this->paths as $path) {
             if (Tools::file_exists_cache($file = $path . $name)) {
                 if (_PS_MODE_DEV_) {
-                    $source = implode('', array(
+                    $source = implode('', [
                         '<!-- begin ' . $file . ' -->',
                         file_get_contents($file),
                         '<!-- end ' . $file . ' -->',
-                    ));
+                    ]);
                 } else {
                     $source = file_get_contents($file);
                 }

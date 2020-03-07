@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -42,18 +42,21 @@ class DatabaseCreator
         define('__PS_BASE_URI__', '/');
         define('_PS_ROOT_DIR_', __DIR__ . '/../../..');
         define('_PS_MODULE_DIR_', _PS_ROOT_DIR_ . '/tests-legacy/resources/modules/');
-        require_once(__DIR__ . '/../../../install-dev/init.php');
+        require_once __DIR__ . '/../../../install-dev/init.php';
 
         $install = new Install();
         \DbPDOCore::createDatabase(_DB_SERVER_, _DB_USER_, _DB_PASSWD_, _DB_NAME_, false);
         $install->clearDatabase(false);
-        $install->installDatabase(true);
+        if (!$install->installDatabase(true)) {
+            // Something went wrong during installation
+            exit(1);
+        }
+
         $process = new Process(PHP_BINARY . ' bin/console prestashop:schema:update-without-foreign --env=test');
         $process->run();
         $install->initializeTestContext();
         $install->installDefaultData('test_shop', false, false, false);
         $install->populateDatabase();
-        $install->installCldrDatas();
 
         $install->configureShop(array(
             'admin_firstname' => 'puff',
@@ -65,8 +68,6 @@ class DatabaseCreator
         ));
         $install->installFixtures();
         $install->installTheme();
-        $language = new \Language(1);
-        \Context::getContext()->language = $language;
         $install->installModules();
 
         DatabaseDump::create();

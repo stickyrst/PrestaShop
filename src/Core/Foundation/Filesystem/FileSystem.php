@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -31,13 +31,23 @@ use SplFileInfo;
 class FileSystem
 {
     /**
+     * Default mode for directories
+     */
+    const DEFAULT_MODE_FOLDER = 0755;
+
+    /**
+     * Default mode for files
+     */
+    const DEFAULT_MODE_FILE = 0644;
+
+    /**
      * Replaces directory separators with the system's native one
      * and trims the trailing separator.
      */
     public function normalizePath($path)
     {
         return rtrim(
-            str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path),
+            str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path),
             DIRECTORY_SEPARATOR
         );
     }
@@ -66,8 +76,8 @@ class FileSystem
             return $this->joinPaths(
                 $arg_0,
                 call_user_func_array(
-                    array($this,
-                          'joinPaths', ),
+                    [$this,
+                        'joinPaths', ],
                     array_slice($func_args, 1)
                 )
             );
@@ -85,24 +95,14 @@ class FileSystem
     public function listEntriesRecursively($path)
     {
         if (!file_exists($path)) {
-            throw new Exception(
-                sprintf(
-                    'No such file or directory: %s',
-                    $path
-                )
-            );
+            throw new Exception(sprintf('No such file or directory: %s', $path));
         }
 
         if (!is_dir($path)) {
-            throw new Exception(
-                sprintf(
-                    '%s is not a directory',
-                    $path
-                )
-            );
+            throw new Exception(sprintf('%s is not a directory', $path));
         }
 
-        $entries = array();
+        $entries = [];
 
         foreach (scandir($path) as $entry) {
             if ($entry === '.' || $entry === '..') {
@@ -128,7 +128,7 @@ class FileSystem
     /**
      * Filter used by listFilesRecursively.
      */
-    private function matchOnlyFiles(\SplFileInfo $info)
+    private function matchOnlyFiles(SplFileInfo $info)
     {
         return $info->isFile();
     }
@@ -140,7 +140,7 @@ class FileSystem
     {
         return array_filter(
             $this->listEntriesRecursively($path),
-            array($this, 'matchOnlyFiles')
+            [$this, 'matchOnlyFiles']
         );
     }
 }

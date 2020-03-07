@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,17 +16,17 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Core\Cart\Calculation;
 
-use \Cart;
+use Cart;
 use CartRule;
 use Context;
 use Order;
@@ -40,7 +40,6 @@ use Tools;
  */
 class CartOld extends Cart
 {
-
     /**
      * This function returns the total cart amount
      *
@@ -118,7 +117,7 @@ class CartOld extends Cart
         }
 
         if ($with_shipping || $type == Cart::ONLY_DISCOUNTS) {
-            if (is_null($products) && is_null($id_carrier)) {
+            if (null === $products && null === $id_carrier) {
                 $shipping_fees = $this->getTotalShippingCost(null, (bool) $with_taxes);
             } else {
                 $shipping_fees = $this->getPackageShippingCost((int) $id_carrier, (bool) $with_taxes, null, $products);
@@ -136,7 +135,7 @@ class CartOld extends Cart
         }
 
         $param_product = true;
-        if (is_null($products)) {
+        if (null === $products) {
             $param_product = false;
             $products      = $this->getProducts();
         }
@@ -215,12 +214,14 @@ class CartOld extends Cart
             switch ($ps_round_type) {
                 case Order::ROUND_TOTAL:
                     $products_total[$id_tax_rules_group . '_' . $id_address] += $price
-                                                                                * (int) $product['cart_quantity'];
+                        * (int) $product['cart_quantity'];
+
                     break;
 
                 case Order::ROUND_LINE:
                     $product_price                       = $price * $product['cart_quantity'];
                     $products_total[$id_tax_rules_group] += Tools::ps_round($product_price, $compute_precision);
+
                     break;
 
                 case Order::ROUND_ITEM:
@@ -228,7 +229,8 @@ class CartOld extends Cart
                     $product_price                       = /*$with_taxes ? $tax_calculator->addTaxes($price) : */
                         $price;
                     $products_total[$id_tax_rules_group] += Tools::ps_round($product_price, $compute_precision)
-                                                            * (int) $product['cart_quantity'];
+                        * (int) $product['cart_quantity'];
+
                     break;
             }
         }
@@ -282,13 +284,13 @@ class CartOld extends Cart
                 // If the cart rule is a free gift, then add the free gift value only if the gift is in this package
                 if (!$this->shouldExcludeGiftsDiscount && (int) $cartRule->gift_product) {
                     $in_order = false;
-                    if (is_null($products)) {
+                    if (null === $products) {
                         $in_order = true;
                     } else {
                         foreach ($products as $product) {
                             if ($cartRule->gift_product == $product['id_product']
                                 && $cartRule->gift_product_attribute
-                                   == $product['id_product_attribute']) {
+                                == $product['id_product_attribute']) {
                                 $in_order = true;
                             }
                         }
@@ -321,7 +323,7 @@ class CartOld extends Cart
             }
 
             $order_total_discount = min(Tools::ps_round($order_total_discount, 2), (float) $order_total_products)
-                                    + (float) $order_shipping_discount;
+                + (float) $order_shipping_discount;
             $order_total          -= $order_total_discount;
         }
 

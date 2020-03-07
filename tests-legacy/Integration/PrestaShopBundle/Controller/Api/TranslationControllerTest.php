@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -29,44 +29,27 @@ namespace LegacyTests\Integration\PrestaShopBundle\Controller\Api;
 /**
  * @group api
  * @group translation
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  */
 class TranslationControllerTest extends ApiTestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-        $cacheMock = $this->getMockBuilder('PrestaShopBundle\Service\Cache\Refresh')
-                   ->disableOriginalConstructor()
-                   ->getMock();
-
-        $cacheMock
-            ->method('execute')
-            ->will($this->returnValue(true));
-
-        self::$container->set('prestashop.cache.refresh', $cacheMock);
-    }
-
     /**
-     * @dataProvider getBadDomains
+     * @dataProvider getBadLocales
      * @test
      *
      * @param $params
      */
-    public function it_should_return_bad_response_when_requesting_domain($params)
+    public function itShouldReturnBadResponseWhenRequestingInvalidLocales($params)
     {
         $this->assertBadRequest('api_translation_domain_catalog', $params);
     }
 
     /**
-     * @dataProvider getGoodDomains
+     * @dataProvider getGoodLocales
      * @test
      *
      * @param $params
      */
-    public function it_should_return_ok_response_when_requesting_domain($params)
+    public function itShouldReturnOkResponseWhenRequestingValidLocales($params)
     {
         $this->assertOkRequest('api_translation_domain_catalog', $params);
     }
@@ -74,31 +57,31 @@ class TranslationControllerTest extends ApiTestCase
     /**
      * @return array
      */
-    public function getBadDomains()
+    public function getBadLocales()
     {
-        return array(
-            array(
-                array('locale' => 'default', 'domain' => 'AdminGloabl'), // syntax error wanted
-            ),
-            array(
-                array('locale' => 'defaultt', 'domain' => 'AdminGlobal'),
-            ),
-        );
+        return [
+            [
+                'syntax error wanted' => ['locale' => 'fr_Fr', 'domain' => 'AdminGlobal'],
+            ],
+            [
+                ['locale' => 'defaultt', 'domain' => 'AdminGlobal'],
+            ],
+        ];
     }
 
     /**
      * @return array
      */
-    public function getGoodDomains()
+    public function getGoodLocales()
     {
-        return array(
-            array(
-                array('locale' => 'default', 'domain' => 'AdminGlobal'),
-            ),
-            array(
-                array('locale' => 'default', 'domain' => 'AdminNavigationMenu'),
-            ),
-        );
+        return [
+            [
+                ['locale' => 'default', 'domain' => 'AdminGlobal'],
+            ],
+            [
+                ['locale' => 'default', 'domain' => 'AdminNavigationMenu'],
+            ],
+        ];
     }
 
     /**
@@ -107,7 +90,7 @@ class TranslationControllerTest extends ApiTestCase
      *
      * @param $params
      */
-    public function it_should_return_bad_response_when_requesting_domain_catalog($params)
+    public function itShouldReturnBadResponseWhenRequestingDomainCatalog($params)
     {
         $this->assertBadRequest('api_translation_domains_tree', $params);
     }
@@ -118,7 +101,7 @@ class TranslationControllerTest extends ApiTestCase
      *
      * @param $params
      */
-    public function it_should_return_ok_response_when_requesting_domain_catalog($params)
+    public function itShouldReturnOkResponseWhenRequestingDomainCatalog($params)
     {
         $this->assertOkRequest('api_translation_domains_tree', $params);
     }
@@ -133,14 +116,14 @@ class TranslationControllerTest extends ApiTestCase
                 array(
                     'lang' => 'en',
                     'type' => 'modules',
-                    'selected' => 'ps_baanner' // syntax error wanted
+                    'selected' => 'ps_baanner', // syntax error wanted
                 ),
             ),
             array(
                 array(
                     'lang' => 'en',
                     'type' => 'frront', // syntax error wanted
-                    'selected' => 'classic'
+                    'selected' => 'classic',
                 ),
             ),
         );
@@ -156,33 +139,42 @@ class TranslationControllerTest extends ApiTestCase
                 array(
                     'lang' => 'en',
                     'type' => 'modules',
-                    'selected' => 'ps_banner'
+                    'selected' => 'ps_banner',
                 ),
             ),
             array(
                 array(
                     'lang' => 'en',
                     'type' => 'front',
-                    'selected' => 'classic'
+                    'selected' => 'classic',
                 ),
             ),
         );
     }
 
-
     /**
      * @test
      */
-    public function it_should_return_error_response_when_requesting_translations_edition()
+    public function itShouldReturnErrorResponseWhenRequestingTranslationsEdition()
     {
         $this->assertErrorResponseOnTranslationEdition();
+    }
+
+    /**
+     * @test
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    public function itShouldReturnErrorResponseWhenRequestingTranslationsEditionWithData()
+    {
+        $this->assertErrorResponseOnTranslationEditionWithData();
     }
 
     /**
      * @dataProvider getGoodEditTranslations
      * @test
      */
-    public function it_should_return_valid_response_when_requesting_translations_edition($params)
+    public function itShouldReturnValidResponseWhenRequestingTranslationsEdition($params)
     {
         $this->assertOkResponseOnTranslationEdition($params);
     }
@@ -210,21 +202,27 @@ class TranslationControllerTest extends ApiTestCase
         );
     }
 
-
-
     /**
      * @test
      */
-    public function it_should_return_error_response_when_requesting_translations_reset()
+    public function itShouldReturnErrorResponseWhenRequestingTranslationsReset()
     {
         $this->assertErrorResponseOnTranslationReset();
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function itShouldReturnErrorResponseWhenRequestingTranslationsResetWithData()
+    {
+        $this->assertErrorResponseOnTranslationResetWithData();
     }
 
     /**
      * @dataProvider getGoodResetTranslations
      * @test
      */
-    public function it_should_return_valid_response_when_requesting_translations_reset($params)
+    public function itShouldReturnValidResponseWhenRequestingTranslationsReset($params)
     {
         $this->assertOkResponseOnTranslationReset($params);
     }
@@ -262,7 +260,17 @@ class TranslationControllerTest extends ApiTestCase
 
         self::$client->request('POST', $editTranslationRoute);
         $this->assertResponseBodyValidJson(400);
+    }
 
+    /**
+     * @return array
+     */
+    private function assertErrorResponseOnTranslationEditionWithData()
+    {
+        $editTranslationRoute = $this->router->generate(
+            'api_translation_value_edit',
+            array('locale' => 'en-US', 'domain' => 'AdminActions')
+        );
 
         self::$client->request('POST', $editTranslationRoute, array(), array(), array(), '{}');
         $this->assertResponseBodyValidJson(400);
@@ -308,7 +316,14 @@ class TranslationControllerTest extends ApiTestCase
 
         self::$client->request('POST', $resetTranslationRoute);
         $this->assertResponseBodyValidJson(400);
+    }
 
+    private function assertErrorResponseOnTranslationResetWithData()
+    {
+        $resetTranslationRoute = $this->router->generate(
+            'api_translation_value_reset',
+            array('locale' => 'en-US', 'domain' => 'AdminActions')
+        );
 
         self::$client->request('POST', $resetTranslationRoute, array(), array(), array(), '{}');
         $this->assertResponseBodyValidJson(400);

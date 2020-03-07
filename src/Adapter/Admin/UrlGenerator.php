@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,22 +16,22 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace PrestaShop\PrestaShop\Adapter\Admin;
 
-use Symfony\Component\Routing\Router;
+use PrestaShop\PrestaShop\Adapter\LegacyContext;
+use ReflectionClass;
+use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
-use PrestaShop\PrestaShop\Adapter\LegacyContext;
-use Symfony\Component\Process\Exception\LogicException;
-use ReflectionClass;
+use Symfony\Component\Routing\Router;
 
 /**
  * This UrlGeneratorInterface implementation (in a Sf service) will provides Legacy URLs.
@@ -69,7 +69,7 @@ class UrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
         // By default, consider given parameters in legacy format (no mapping if route not found).
         $legacyController = $name;
@@ -91,7 +91,7 @@ class UrlGenerator implements UrlGeneratorInterface
      *
      * @return array[] An array with: the legacy controller name, then the parameters array
      */
-    final public function getLegacyOptions($routeName, $parameters = array())
+    final public function getLegacyOptions($routeName, $parameters = [])
     {
         $legacyController = $routeName;
         $legacyParameters = $parameters;
@@ -109,7 +109,7 @@ class UrlGenerator implements UrlGeneratorInterface
             }
         }
 
-        return array($legacyController, $legacyParameters);
+        return [$legacyController, $legacyParameters];
     }
 
     /**

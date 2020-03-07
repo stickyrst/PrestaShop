@@ -1,5 +1,5 @@
 <!--**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -15,23 +15,38 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div id="search" class="col-md-8 mb-4">
-    <form class="search-form" @submit.prevent>
-      <label>{{trans('search_label')}}</label>
+  <div
+    id="search"
+    class="col-md-8 mb-4"
+  >
+    <form
+      class="search-form"
+      @submit.prevent
+    >
+      <label>{{ trans('search_label') }}</label>
       <div class="input-group">
-        <PSTags ref="psTags" :tags="tags" @tagChange="onSearch" :placeholder="trans('search_placeholder')" />
+        <PSTags
+          ref="psTags"
+          :tags="tags"
+          @tagChange="onSearch"
+          :placeholder="trans('search_placeholder')"
+        />
         <div class="input-group-append">
-          <PSButton @click="onClick" class="search-button" :primary="true">
-              <i class="material-icons">search</i>
-              {{trans('button_search')}}
+          <PSButton
+            @click="onClick"
+            class="search-button"
+            :primary="true"
+          >
+            <i class="material-icons">search</i>
+            {{ trans('button_search') }}
           </PSButton>
         </div>
       </div>
@@ -40,8 +55,8 @@
 </template>
 
 <script>
-  import PSTags from 'app/widgets/ps-tags';
-  import PSButton from 'app/widgets/ps-button';
+  import PSTags from '@app/widgets/ps-tags';
+  import PSButton from '@app/widgets/ps-button';
 
   export default {
     components: {
@@ -50,7 +65,7 @@
     },
     methods: {
       onClick() {
-        const tag = this.$refs.psTags.tag;
+        const {tag} = this.$refs.psTags;
         this.$refs.psTags.add(tag);
       },
       onSearch() {

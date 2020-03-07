@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,24 +16,24 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
 namespace LegacyTests\Unit\Adapter\Module\Configuration;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Statement;
 use Doctrine\DBAL\Driver\PDOMySql\Driver;
+use Doctrine\DBAL\Statement;
+use LegacyTests\TestCase\UnitTestCase;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Adapter\Module\Configuration\ModuleSelfConfigurator;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository;
-use LegacyTests\TestCase\UnitTestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 
 class ModuleSelfConfiguratorTest extends UnitTestCase
 {
@@ -54,10 +54,10 @@ class ModuleSelfConfiguratorTest extends UnitTestCase
 
     public $defaultDir;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->configuration = new ConfigurationMock();
-        $this->connection = new ConnectionMock(array(), new Driver);
+        $this->connection = new ConnectionMock(array(), new Driver());
         $this->mockModuleRepository();
 
         $this->defaultDir = __DIR__.'/../../../../resources/module-self-config-files';
@@ -152,7 +152,8 @@ class ModuleSelfConfiguratorTest extends UnitTestCase
         $filepath = $this->defaultDir.'/moduleConfCrashFileSource.yml';
         $name = 'bankwire';
 
-        $this->setExpectedException('Exception', 'Missing source file');
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Missing source file');
         $this->getModuleSelfConfigurator()->module($name)->file($filepath)->configure();
     }
 
@@ -161,7 +162,8 @@ class ModuleSelfConfiguratorTest extends UnitTestCase
         $filepath = $this->defaultDir.'/moduleConfCrashFileDestination.yml';
         $name = 'bankwire';
 
-        $this->setExpectedException('Exception', 'Missing destination file');
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Missing destination file');
         $this->getModuleSelfConfigurator()->module($name)->file($filepath)->configure();
     }
 
@@ -223,7 +225,8 @@ class ModuleSelfConfiguratorTest extends UnitTestCase
         $filepath = $this->defaultDir.'/moduleConfCrashSql.yml';
         $name = 'bankwire';
 
-        $this->setExpectedException('Exception', 'Missing file path');
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Missing file path');
         $this->getModuleSelfConfigurator()->module($name)->file($filepath)->configure();
     }
 
@@ -308,6 +311,7 @@ class ConfigurationMock extends Configuration
     public function set($key, $value, array $options = [])
     {
         $this->configurationData[$key] = $value;
+
         return $this;
     }
 
@@ -319,6 +323,7 @@ class ConfigurationMock extends Configuration
     public function remove($key)
     {
         unset($this->configurationData[$key]);
+
         return $this;
     }
 }
@@ -349,6 +354,7 @@ class ConnectionMock extends Connection
     public function prepare($statement)
     {
         $this->sql[] = $statement;
+
         return new StatementMock($statement, $this);
     }
 }
@@ -356,5 +362,6 @@ class ConnectionMock extends Connection
 class StatementMock extends Statement
 {
     public function __construct($sql, Connection $conn) { }
+
     public function execute($params = null) { }
 }

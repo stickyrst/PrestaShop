@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -32,7 +32,7 @@ use TaxCalculator;
 
 class TaxCalculatorCoreTest extends TestCase
 {
-    public function test_getTotalRate_OK()
+    public function testGetTotalRateOK()
     {
         $tax = new Tax();
         $tax->rate = 20.6;
@@ -40,7 +40,7 @@ class TaxCalculatorCoreTest extends TestCase
         $tax2->rate = 5.5;
 
         $tax_calculator = new TaxCalculator(array(
-            $tax, $tax2
+            $tax, $tax2,
         ), TaxCalculator::COMBINE_METHOD);
 
         $totalRate = $tax_calculator->getTotalRate();
@@ -48,7 +48,7 @@ class TaxCalculatorCoreTest extends TestCase
         $this->assertEquals(26.1, $totalRate);
     }
 
-    public function test_getTotalRate_Bug()
+    public function testGetTotalRateBug()
     {
         $tax = new Tax();
         $tax->rate = 20.6;
@@ -56,7 +56,7 @@ class TaxCalculatorCoreTest extends TestCase
         $tax2->rate = 5.5;
 
         $tax_calculator = new TaxCalculator(array(
-            $tax, $tax2
+            $tax, $tax2,
         ), TaxCalculator::ONE_AFTER_ANOTHER_METHOD);
 
         $totalRate = $tax_calculator->getTotalRate();

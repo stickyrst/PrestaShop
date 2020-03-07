@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,21 +16,21 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Core\Addon;
 
-use PrestaShop\PrestaShop\Core\Addon\Theme\ThemeRepository;
-use PrestaShop\PrestaShop\Adapter\Configuration;
-use Symfony\Component\Filesystem\Filesystem;
-use PHPUnit\Framework\TestCase;
 use Phake;
+use PHPUnit\Framework\TestCase;
+use PrestaShop\PrestaShop\Adapter\Configuration;
+use PrestaShop\PrestaShop\Core\Addon\Theme\ThemeRepository;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ThemeRepositoryTest extends TestCase
 {
@@ -62,7 +62,8 @@ class ThemeRepositoryTest extends TestCase
     public function testGetInstanceByName()
     {
         $expectedTheme = $this->repository->getInstanceByName('classic');
-        $this->assertInstanceOf('PrestaShop\PrestaShop\Core\Addon\Theme\Theme',
+        $this->assertInstanceOf(
+            'PrestaShop\PrestaShop\Core\Addon\Theme\Theme',
             $expectedTheme,
             self::NOTICE.sprintf('expected `getInstanceByName to return Theme, get %s`', gettype($expectedTheme))
         );
@@ -70,7 +71,7 @@ class ThemeRepositoryTest extends TestCase
 
     public function testGetInstanceByNameNotFound()
     {
-        $this->setExpectedException('PrestaShopException');
+        $this->expectException('PrestaShopException');
         $this->repository->getInstanceByName('not_found');
     }
 
@@ -85,12 +86,14 @@ class ThemeRepositoryTest extends TestCase
     {
         $themeListWithoutRestrictions = $this->repository->GetListExcluding([]);
         $themeListWithoutClassic = $this->repository->GetListExcluding(['classic']);
-        $this->assertEquals($themeListWithoutRestrictions,
+        $this->assertEquals(
+            $themeListWithoutRestrictions,
             $this->repository->getList(),
             self::NOTICE.sprintf('expected list excluding without args to return complete list of themes `see ThemeRepository::getListExcluding`')
         );
 
-        $this->assertCount((count($themeListWithoutRestrictions) - 1),
+        $this->assertCount(
+            (count($themeListWithoutRestrictions) - 1),
             $themeListWithoutClassic,
             self::NOTICE.sprintf('expected list excluding with classic to list of themes without classic')
         );

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,20 +16,20 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace LegacyTests\Unit\Core\Grid\Query;
 
-use stdClass;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Core\Grid\Exception\UnsupportedParameterException;
 use PrestaShop\PrestaShop\Core\Grid\Query\DoctrineQueryParser;
+use stdClass;
 
 class DoctrineQueryParserTest extends TestCase
 {
@@ -41,7 +41,7 @@ class DoctrineQueryParserTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->queryParser = new DoctrineQueryParser();
     }
@@ -83,7 +83,7 @@ class DoctrineQueryParserTest extends TestCase
                 'ok',
                 'nok',
                 'none',
-            ]
+            ],
         ];
 
         $expectedQuery = "SELECT tests FROM pierre_rambaud WHERE motivation IN ('great', 'good', 'ok', 'nok', 'none')";
@@ -107,7 +107,7 @@ class DoctrineQueryParserTest extends TestCase
                 'ok',
                 'nok',
                 'none',
-            ]
+            ],
         ];
 
         $this->queryParser->parse($preparedQuery, $queryParameters);

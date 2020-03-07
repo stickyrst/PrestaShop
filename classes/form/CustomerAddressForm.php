@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -110,15 +110,17 @@ class CustomerAddressFormCore extends AbstractForm
             if ($postcode->isRequired()) {
                 $country = $this->formatter->getCountry();
                 if (!$country->checkZipCode($postcode->getValue())) {
-                    $postcode->addError($this->translator->trans('Invalid postcode - should look like "%zipcode%"',
-                        array('%zipcode%' => $country->zip_code_format),
-                        'Shop.Forms.Errors'));
+                    $postcode->addError($this->translator->trans(
+                        'Invalid postcode - should look like "%zipcode%"',
+                        ['%zipcode%' => $country->zip_code_format],
+                        'Shop.Forms.Errors'
+                    ));
                     $is_valid = false;
                 }
             }
         }
 
-        if (($hookReturn = Hook::exec('actionValidateCustomerAddressForm', array('form' => $this))) !== '') {
+        if (($hookReturn = Hook::exec('actionValidateCustomerAddressForm', ['form' => $this])) !== '') {
             $is_valid &= (bool) $hookReturn;
         }
 
@@ -148,7 +150,7 @@ class CustomerAddressFormCore extends AbstractForm
             $address->alias = $this->translator->trans('My Address', [], 'Shop.Theme.Checkout');
         }
 
-        Hook::exec('actionSubmitCustomerAddressForm', array('address' => &$address));
+        Hook::exec('actionSubmitCustomerAddressForm', ['address' => &$address]);
 
         $this->setAddress($address);
 
@@ -208,11 +210,11 @@ class CustomerAddressFormCore extends AbstractForm
             $formFields['lastname']['value'] = $context->customer->lastname;
         }
 
-        return array(
+        return [
             'id_address' => (isset($this->address->id)) ? $this->address->id : 0,
             'action' => $this->action,
             'errors' => $this->getErrors(),
             'formFields' => $formFields,
-        );
+        ];
     }
 }

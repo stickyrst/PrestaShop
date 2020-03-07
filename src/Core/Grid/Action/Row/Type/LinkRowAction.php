@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -45,6 +45,8 @@ final class LinkRowAction extends AbstractRowAction
      */
     protected function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver
             ->setRequired([
                 'route',
@@ -54,12 +56,18 @@ final class LinkRowAction extends AbstractRowAction
             ->setDefaults([
                 'confirm_message' => '',
                 'accessibility_checker' => null,
+                //pass extra_route_params in case one param is not enough.
+                //route_param_name and route_param_field becomes redundant, but it cannot be removed due to BC break
+                'extra_route_params' => [],
+                'clickable_row' => false,
             ])
             ->setAllowedTypes('route', 'string')
             ->setAllowedTypes('route_param_name', 'string')
             ->setAllowedTypes('route_param_field', 'string')
+            ->setAllowedTypes('extra_route_params', 'array')
             ->setAllowedTypes('confirm_message', 'string')
             ->setAllowedTypes('accessibility_checker', [AccessibilityCheckerInterface::class, 'callable', 'null'])
+            ->setAllowedTypes('clickable_row', 'boolean')
         ;
     }
 

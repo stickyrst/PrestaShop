@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,18 +16,19 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
 namespace LegacyTests\PrestaShopBundle\Service\Hook;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use PrestaShopBundle\Service\Hook\HookEvent;
 use PrestaShopBundle\Service\Hook\RenderingHookEvent;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -46,9 +47,9 @@ class HookDispatcherTest extends KernelTestCase
         $kernel->boot();
         $hookDisptacher = $kernel->getContainer()->get('prestashop.hook.dispatcher');
 
-        $hookDisptacher->dispatch('unknown_hook_name');
-        $hookDisptacher->dispatch('unknown_hook_name', new HookEvent());
-        $hookDisptacher->dispatch('unknown_hook_name', new RenderingHookEvent());
+        $this->assertInstanceOf(HookEvent::class, $hookDisptacher->dispatch('unknown_hook_name'));
+        $this->assertInstanceOf(HookEvent::class, $hookDisptacher->dispatch('unknown_hook_name', new HookEvent()));
+        $this->assertInstanceOf(HookEvent::class, $hookDisptacher->dispatch('unknown_hook_name', new RenderingHookEvent()));
     }
 
     /**
@@ -66,7 +67,9 @@ class HookDispatcherTest extends KernelTestCase
         $hookDisptacher->dispatch('test_test');
         $this->assertTrue($this->testedListenerCallbackCalled);
     }
+
     private $testedListenerCallbackCalled = false;
+
     public function listenerCallback(Event $event, $eventName)
     {
         $this->assertEquals('test_test', $eventName);

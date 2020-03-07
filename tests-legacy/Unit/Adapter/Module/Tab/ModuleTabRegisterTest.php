@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,17 +16,18 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
 namespace LegacyTests\Unit\Adapter\Module\Tab;
 
-use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
 use LegacyTests\TestCase\UnitTestCase;
+use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ModuleTabRegisterTest extends UnitTestCase
@@ -51,6 +52,13 @@ class ModuleTabRegisterTest extends UnitTestCase
                 'exception' => 'Class "AdminMissingController" not found in controllers/admin',
             ),
         ),
+        'symfony' => array(
+            // modules with routes are added regardless of the controller existing or not
+            array(
+                'class_name' => 'UnknownLegacyController',
+                'route_name' => 'some_fancy_symfony_route',
+            ),
+        ),
     );
 
     protected $moduleAdminControllers = array(
@@ -61,9 +69,10 @@ class ModuleTabRegisterTest extends UnitTestCase
     protected $expectedTabsToAdd = array(
         'gamification' => array('AdminGamification'),
         'doge' => array('Wololo', 'AdminMissing', 'AdminMy'),
+        'symfony' => array('UnknownLegacyController'),
     );
 
-    protected  $languages = array(
+    protected $languages = array(
         array(
             "id_lang" => 1,
             "name" => "Français (French)",
@@ -115,7 +124,7 @@ class ModuleTabRegisterTest extends UnitTestCase
             "is_rtl" => "0",
             "id_shop" => "1",
             "shops" => array(),
-        )
+        ),
     );
 
     /**
@@ -123,7 +132,7 @@ class ModuleTabRegisterTest extends UnitTestCase
      */
     protected $tabRegister;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -139,8 +148,7 @@ class ModuleTabRegisterTest extends UnitTestCase
                 $this->sfKernel->getContainer()->get('filesystem'),
                 $this->languages,
             ))
-            ->getMock()
-        ;
+            ->getMock();
         $this->tabRegister
             ->method('getModuleAdminControllersFilename')
             ->will($this->returnValueMap($this->moduleAdminControllers));
@@ -169,10 +177,12 @@ class ModuleTabRegisterTest extends UnitTestCase
                     continue;
                 }
                 $data = new ParameterBag($tab);
+
                 try {
                     $this->invokeMethod($this->tabRegister, 'checkIsValid', array($moduleName, $data));
                 } catch (\Exception $e) {
                     $this->assertEquals($e->getMessage(), $tab['exception']);
+
                     continue;
                 }
                 $this->fail('Expected Exception "'.$tab['exception'].'" has not been raised.');
@@ -190,7 +200,8 @@ class ModuleTabRegisterTest extends UnitTestCase
             foreach($tabs as $tab) {
                 $this->assertTrue(
                         in_array($tab['class_name'], $this->expectedTabsToAdd[$moduleName]),
-                        'Module '.$moduleName.' should not register '.$tab['class_name']);
+                        'Module '.$moduleName.' should not register '.$tab['class_name']
+                );
             }
 
             // In the opposite, we check no tab is missing

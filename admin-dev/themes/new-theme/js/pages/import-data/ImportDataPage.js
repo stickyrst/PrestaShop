@@ -1,5 +1,5 @@
 /**
- * 2007-2018 PrestaShop.
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -15,10 +15,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -50,17 +50,20 @@ export default class ImportDataPage {
       return;
     }
 
-    let configuration = {};
+    const configuration = {};
 
     // Collect the configuration from the form into an array.
     $('.import-data-configuration-form').find(
-      '#skip, select[name^=type_value], #csv, #iso_lang, #entity,' +
-      '#truncate, #match_ref, #regenerate, #forceIDs, #sendemail,' +
-      '#separator, #multiple_value_separator'
+      '#skip, select[name^=type_value], #csv, #iso_lang, #entity,'
+      + '#truncate, #match_ref, #regenerate, #forceIDs, #sendemail,'
+      + '#separator, #multiple_value_separator',
     ).each((index, $input) => {
       configuration[$($input).attr('name')] = $($input).val();
     });
 
-    this.importer.import(configuration);
+    this.importer.import(
+      $('.js-import-process-button').data('import_url'),
+      configuration,
+    );
   }
 }

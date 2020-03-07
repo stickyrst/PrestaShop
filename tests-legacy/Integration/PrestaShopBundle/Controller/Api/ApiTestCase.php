@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2018 PrestaShop
+ * 2007-2020 PrestaShop SA and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,10 @@
  *
  * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
  * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
+ * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2018 PrestaShop SA
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -30,7 +30,10 @@ use Context;
 use Language;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use Shop;
+use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 // bin/phpunit -c tests/phpunit-admin.xml --group api --stop-on-error --stop-on-failure --verbose --debug
 abstract class ApiTestCase extends WebTestCase
@@ -41,7 +44,7 @@ abstract class ApiTestCase extends WebTestCase
     protected $router;
 
     /**
-     * @var \Symfony\Component\BrowserKit\Client
+     * @var Client
      */
     protected static $client;
 
@@ -53,7 +56,7 @@ abstract class ApiTestCase extends WebTestCase
      */
     protected static $container;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -72,7 +75,7 @@ abstract class ApiTestCase extends WebTestCase
         self::$client = $client;
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         parent::tearDown();
 
@@ -83,7 +86,7 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function mockContextAdapter()
     {
@@ -93,13 +96,12 @@ abstract class ApiTestCase extends WebTestCase
                 'getEmployeeLanguageIso',
                 'getEmployeeCurrency',
                 'getRootUrl',
-                'getLanguage'
+                'getLanguage',
             ))
-            ->getMock()
-        ;
+            ->getMock();
 
         $contextMock = $this->mockContext();
-        $legacyContextMock->method('getContext')->willReturn($contextMock);
+        $legacyContextMock->expects($this->any())->method('getContext')->willReturn($contextMock);
 
         $legacyContextMock->method('getEmployeeLanguageIso')->willReturn(null);
         $legacyContextMock->method('getEmployeeCurrency')->willReturn(null);
@@ -110,11 +112,11 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function mockContext()
     {
-        $contextMock = $this->getMockBuilder('\Context')->getMock();
+        $contextMock = $this->getMockBuilder('Context')->getMock();
 
         $employeeMock = $this->mockEmployee();
         $contextMock->employee = $employeeMock;
@@ -139,7 +141,7 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function mockEmployee()
     {
@@ -150,13 +152,12 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function mockLanguage()
     {
         $languageMock = $this->getMockBuilder('\Language')
-            ->getMock()
-        ;
+            ->getMock();
 
         $languageMock->iso_code = 'en-US';
 
@@ -164,7 +165,7 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function mockLink()
     {
@@ -172,7 +173,7 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function mockShop()
     {
@@ -183,13 +184,21 @@ abstract class ApiTestCase extends WebTestCase
                 'getContextType',
                 'getGroup',
             ))
-            ->getMock()
-        ;
+            ->getMock();
 
         $shopMock->method('getContextualShopId')->willReturn(1);
         $shopMock->method('getCategory')->willReturn(1);
         $shopMock->method('getContextType')->willReturn(Shop::CONTEXT_SHOP);
         $shopMock->id = 1;
+
+        $themeMock = $this->getMockBuilder(Theme::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getName'])
+            ->getMock()
+        ;
+        $themeMock->method('getName')->willReturn('classic');
+
+        $shopMock->theme = $themeMock;
 
         $shopGroupMock = $this->getMockBuilder('\ShopGroup')->getMock();
 
@@ -200,14 +209,13 @@ abstract class ApiTestCase extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function mockController()
     {
         $controller = $this->getMockBuilder('\AdminController')
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $controller->controller_type = 'admin';
 
@@ -256,12 +264,15 @@ abstract class ApiTestCase extends WebTestCase
         switch ($expectedStatusCode) {
             case 200:
                 $message = 'It should return a response with "OK" Status.';
+
                 break;
             case 400:
                 $message = 'It should return a response with "Bad Request" Status.';
+
                 break;
             case 404:
                 $message = 'It should return a response with "Not Found" Status.';
+
                 break;
 
             default:
